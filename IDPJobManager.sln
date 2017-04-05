@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.10
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDPJobManager", "IDPJobManager\IDPJobManager.csproj", "{15C68529-2C93-4437-832B-53F4B8037F98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDPJobManager.Core", "IDPJobManager.Core\IDPJobManager.Core.csproj", "{52285AFE-41D2-4179-B53E-A0B902E7C2F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDPJobManager.Web", "IDPJobManager.Web\IDPJobManager.Web.csproj", "{07B6F36F-BDC7-436E-87A2-6CA950F1EE92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDPJobManager.Core.Tests", "IDPJobManager.Core.Test\IDPJobManager.Core.Tests.csproj", "{389C5378-6A69-425B-9D20-319B7720675F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDPJobManager.Web.Tests", "IDPJobManager.Web.Test\IDPJobManager.Web.Tests.csproj", "{71119842-F5C4-4617-B519-16B491E42502}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{304254DA-3A69-4284-8804-9CCD037E6329}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15C68529-2C93-4437-832B-53F4B8037F98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15C68529-2C93-4437-832B-53F4B8037F98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15C68529-2C93-4437-832B-53F4B8037F98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15C68529-2C93-4437-832B-53F4B8037F98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52285AFE-41D2-4179-B53E-A0B902E7C2F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52285AFE-41D2-4179-B53E-A0B902E7C2F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52285AFE-41D2-4179-B53E-A0B902E7C2F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52285AFE-41D2-4179-B53E-A0B902E7C2F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07B6F36F-BDC7-436E-87A2-6CA950F1EE92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07B6F36F-BDC7-436E-87A2-6CA950F1EE92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07B6F36F-BDC7-436E-87A2-6CA950F1EE92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07B6F36F-BDC7-436E-87A2-6CA950F1EE92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{389C5378-6A69-425B-9D20-319B7720675F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{389C5378-6A69-425B-9D20-319B7720675F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{389C5378-6A69-425B-9D20-319B7720675F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{389C5378-6A69-425B-9D20-319B7720675F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71119842-F5C4-4617-B519-16B491E42502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71119842-F5C4-4617-B519-16B491E42502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71119842-F5C4-4617-B519-16B491E42502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71119842-F5C4-4617-B519-16B491E42502}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{389C5378-6A69-425B-9D20-319B7720675F} = {304254DA-3A69-4284-8804-9CCD037E6329}
+		{71119842-F5C4-4617-B519-16B491E42502} = {304254DA-3A69-4284-8804-9CCD037E6329}
+	EndGlobalSection
+EndGlobal
