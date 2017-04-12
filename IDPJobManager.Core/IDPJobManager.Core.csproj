@@ -70,7 +70,11 @@
     <Compile Include="Domain\TriggerTypes\CronTriggerType.cs" />
     <Compile Include="Domain\TriggerTypes\SimpleTriggerType.cs" />
     <Compile Include="Domain\TriggerTypes\TriggerType.cs" />
+    <Compile Include="ICommandInvoker.cs" />
+    <Compile Include="ICommandInvokerFactory.cs" />
     <Compile Include="ISchedulerDataProvider.cs" />
+    <Compile Include="IViewProjection.cs" />
+    <Compile Include="IViewProjectionFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchedulerProviders\ISchedulerProvider.cs" />
     <Compile Include="SchedulerProviders\SchedulerProviderException.cs" />

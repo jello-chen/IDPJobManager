@@ -48,6 +48,12 @@
             ResourceViewLocationProvider.Ignore.Add(typeof(Nancy.ViewEngines.Razor.RazorViewEngine).Assembly); 
         }
 
+        protected override void ConfigureApplicationContainer(TinyIoCContainer container)
+        {
+            base.ConfigureApplicationContainer(container);
+
+        }
+
         protected override NancyInternalConfiguration InternalConfiguration
         {
             get

@@ -81,6 +81,9 @@
     <Compile Include="Authentication\IDPJobManagerUserIdentity.cs" />
     <Compile Include="Authentication\IDPJobManagerUserValidator.cs" />
     <Compile Include="ErrorHandling\NotFoundHandler.cs" />
+    <Compile Include="Extensions\TinyIoCContainerExtensions.cs" />
+    <Compile Include="Features\CommandInvokerFactory.cs" />
+    <Compile Include="Features\ViewProjectionFactory.cs" />
     <Compile Include="Models\JobModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Modules\AccountModule.cs" />
