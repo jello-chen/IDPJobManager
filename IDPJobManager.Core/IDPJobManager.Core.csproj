@@ -82,6 +82,7 @@
     <Compile Include="SchedulerProviders\TriggerTypeExtractor.cs" />
     <Compile Include="Utils\DateTimeOffsetExtensions.cs" />
     <Compile Include="Utils\DbHelper.cs" />
+    <Compile Include="Utils\Ensure.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="job_scheduling_data_2_0.xsd">

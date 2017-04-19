@@ -64,6 +64,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -121,6 +122,10 @@
     <EmbeddedResource Include="Views\Account\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IDPJobManager.Bootstrapper.Mef\IDPJobManager.Bootstrapper.Mef.csproj">
+      <Project>{2075D506-BB28-42CD-A34E-5D2227F07CC7}</Project>
+      <Name>IDPJobManager.Bootstrapper.Mef</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IDPJobManager.Core\IDPJobManager.Core.csproj">
       <Project>{52285afe-41d2-4179-b53e-a0b902e7c2f4}</Project>
       <Name>IDPJobManager.Core</Name>

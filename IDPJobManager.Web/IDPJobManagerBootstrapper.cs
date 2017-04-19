@@ -10,6 +10,7 @@
     using Nancy.TinyIoc;
     using Nancy.Hosting.Self;
     using Nancy.Session;
+    using IDPJobManager.Bootstrapper.Mef;
 
     internal class IDPJobManagerBootstrapper : DefaultNancyBootstrapper
     {
