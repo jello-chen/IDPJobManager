@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using IDPJobManager.Bootstrapper.Mef.Extensions;
 using Nancy;
+using System.Diagnostics;
 
 namespace IDPJobManager.Bootstrapper.Mef.Composition.Registration
 {
@@ -34,7 +35,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Registration
             /// <param name="factory"></param>
             public FuncFactory(ExportFactory<T> factory)
             {
-                Contract.Requires<ArgumentNullException>(factory != null);
+                Debug.Assert(factory != null);
 
                 this.factory = factory;
             }
@@ -70,7 +71,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Registration
         /// <returns></returns>
         static internal bool IsExportableNancyPart(Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null);
+            Debug.Assert(type != null);
             var name = type.Name;
 
             // we are a MEF assembly, we aren't Nancy parts
@@ -112,7 +113,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Registration
         /// <returns></returns>
         static internal bool IsNancyContract(Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null);
+            Debug.Assert(type != null);
 
             var b = true;
 
@@ -166,7 +167,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Registration
         /// <returns></returns>
         ConstructorInfo SelectConstructor(ConstructorInfo[] constructors)
         {
-            Contract.Requires<ArgumentNullException>(constructors != null);
+            Debug.Assert(constructors != null);
 
             // TODO can we do something here about selecting one based on exports? Hmm.
             return constructors
@@ -181,8 +182,8 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Registration
         /// <param name="builder"></param>
         void BuildParameter(ParameterInfo parameter, ImportBuilder builder)
         {
-            Contract.Requires<ArgumentNullException>(parameter != null);
-            Contract.Requires<ArgumentNullException>(builder != null);
+            Debug.Assert(parameter != null);
+            Debug.Assert(builder != null);
 
             var name = parameter.ParameterType.FullName;
 

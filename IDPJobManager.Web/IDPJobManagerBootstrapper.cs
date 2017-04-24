@@ -11,8 +11,9 @@
     using Nancy.Hosting.Self;
     using Nancy.Session;
     using IDPJobManager.Bootstrapper.Mef;
+    using System.ComponentModel.Composition.Hosting;
 
-    internal class IDPJobManagerBootstrapper : DefaultNancyBootstrapper
+    internal class IDPJobManagerBootstrapper : MefNancyBootstrapper
     {
         static IDPJobManagerBootstrapper()
         {
@@ -32,27 +33,19 @@
             return nancyHost;
         }
 
-        
-  
-        protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
+        protected override void ApplicationStartup(CompositionContainer container, IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);
 
             CookieBasedSessions.Enable(pipelines);
 
             pipelines.EnableBasicAuthentication(new BasicAuthenticationConfiguration(
-                container.Resolve<IUserValidator>(),
+                container.GetExportedValue<IUserValidator>(),
                 "IDPJobManager"));
 
             ResourceViewLocationProvider.RootNamespaces.Add(Assembly.GetExecutingAssembly(), "IDPJobManager.Web.Views");
 
-            ResourceViewLocationProvider.Ignore.Add(typeof(Nancy.ViewEngines.Razor.RazorViewEngine).Assembly); 
-        }
-
-        protected override void ConfigureApplicationContainer(TinyIoCContainer container)
-        {
-            base.ConfigureApplicationContainer(container);
-
+            ResourceViewLocationProvider.Ignore.Add(typeof(Nancy.ViewEngines.Razor.RazorViewEngine).Assembly);
         }
 
         protected override NancyInternalConfiguration InternalConfiguration
@@ -63,11 +56,6 @@
                 res.ViewLocationProvider = typeof(ResourceViewLocationProvider);
                 return res;
             }
-        }
-
-        void OnConfigurationBuilder(NancyInternalConfiguration x)
-        {
-            x.ViewLocationProvider = typeof(ResourceViewLocationProvider);
         }
     }
 }

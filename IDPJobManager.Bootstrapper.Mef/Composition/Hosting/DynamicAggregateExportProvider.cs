@@ -46,7 +46,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
         public DynamicAggregateExportProvider(IEnumerable<ExportProvider> providers)
             : this()
         {
-            Contract.Requires<ArgumentNullException>(providers != null);
+            Debug.Assert(providers != null);
 
             this.providers.AddRange(providers);
         }
@@ -58,7 +58,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
         public DynamicAggregateExportProvider(params ExportProvider[] providers)
             : this(providers.Cast<ExportProvider>())
         {
-            Contract.Requires<ArgumentNullException>(providers != null);
+            Debug.Assert(providers != null);
         }
 
         /// <summary>
@@ -68,8 +68,8 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
         /// <param name="args"></param>
         void providers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-            Contract.Requires<ArgumentNullException>(sender != null);
-            Contract.Requires<ArgumentNullException>(args != null);
+            Debug.Assert(sender != null);
+            Debug.Assert(args != null);
 
             // unsubscribe from old items
             foreach (var provider in args.OldItems.EmptyIfNull().Cast<ExportProvider>())
@@ -88,15 +88,15 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
 
         void provider_ExportsChanging(object sender, ExportsChangeEventArgs args)
         {
-            Contract.Requires<ArgumentNullException>(sender != null);
-            Contract.Requires<ArgumentNullException>(args != null);
+            Debug.Assert(sender != null);
+            Debug.Assert(args != null);
             OnExportsChanging(args);
         }
 
         void provider_ExportsChanged(object sender, ExportsChangeEventArgs args)
         {
-            Contract.Requires<ArgumentNullException>(sender != null);
-            Contract.Requires<ArgumentNullException>(args != null);
+            Debug.Assert(sender != null);
+            Debug.Assert(args != null);
             OnExportsChanged(args);
         }
 
@@ -159,7 +159,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
         /// <returns></returns>
         IEnumerable<Export> GetExportsCoreInternal(ImportDefinition definition, AtomicComposition atomicComposition)
         {
-            Contract.Requires<ArgumentNullException>(definition != null);
+            Debug.Assert(definition != null);
             ThrowIfDisposed();
 
             // asked for ZeroOrMore: simply return from all providers

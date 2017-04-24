@@ -1,20 +1,24 @@
 ﻿using IDPJobManager.Core;
 using Nancy.TinyIoc;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 
 namespace IDPJobManager.Web.Features
 {
+    [Export(typeof(IViewProjectionFactory))]
     public class ViewProjectionFactory : IViewProjectionFactory
     {
-        private readonly TinyIoCContainer _container;
+        private readonly CompositionContainer _container;
 
-        public ViewProjectionFactory(TinyIoCContainer container)
+        [ImportingConstructor]
+        public ViewProjectionFactory(CompositionContainer container)
         {
             _container = container;
         }
 
         public TOut Get<TIn, TOut>(TIn input)
         {
-            var viewProjection = _container.Resolve<IViewProjection<TIn, TOut>>();
+            var viewProjection = _container.GetExportedValue<IViewProjection<TIn, TOut>>();
             return viewProjection.Project(input);
         }
     }

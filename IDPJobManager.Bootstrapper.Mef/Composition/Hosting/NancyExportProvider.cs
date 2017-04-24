@@ -7,6 +7,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 
 using Nancy.ViewEngines;
+using System.Diagnostics;
 
 namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
 {
@@ -25,7 +26,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
         public NancyExportProvider(IEnumerable<ExportProvider> providers)
             : base(providers)
         {
-            Contract.Requires<ArgumentNullException>(providers != null);
+            Debug.Assert(providers != null);
         }
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
         public NancyExportProvider(params ExportProvider[] providers)
             : base(providers)
         {
-            Contract.Requires<ArgumentNullException>(providers != null);
+            Debug.Assert(providers != null);
         }
 
         /// <summary>

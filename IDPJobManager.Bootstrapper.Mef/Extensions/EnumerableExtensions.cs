@@ -20,8 +20,8 @@ namespace IDPJobManager.Bootstrapper.Mef.Extensions
         /// <returns></returns>
         public static IEnumerable<T> Prepend<T>(this IEnumerable<T> self, T item)
         {
-            Contract.Requires<ArgumentNullException>(self != null);
-            Contract.Requires<ArgumentNullException>(item != null);
+            Debug.Assert(self != null);
+            Debug.Assert(item != null);
 
             yield return item;
             foreach (var i in self)
@@ -37,8 +37,8 @@ namespace IDPJobManager.Bootstrapper.Mef.Extensions
         /// <returns></returns>
         public static IEnumerable<T> Recurse<T>(this T self, Func<T, T> node)
         {
-            Contract.Requires<ArgumentNullException>(self != null);
-            Contract.Requires<ArgumentNullException>(node != null);
+            Debug.Assert(self != null);
+            Debug.Assert(node != null);
 
             for (var i = self; i != null; i = node(i))
                 yield return i;
@@ -53,8 +53,8 @@ namespace IDPJobManager.Bootstrapper.Mef.Extensions
         /// <returns></returns>
         public static IEnumerable<T> Recurse<T>(this T self, Func<T, IEnumerable<T>> nodes)
         {
-            Contract.Requires<ArgumentNullException>(self != null);
-            Contract.Requires<ArgumentNullException>(nodes != null);
+            Debug.Assert(self != null);
+            Debug.Assert(nodes != null);
 
             yield return self;
 
@@ -72,8 +72,8 @@ namespace IDPJobManager.Bootstrapper.Mef.Extensions
         /// <returns></returns>
         public static IEnumerable<T> Recurse<T>(this IEnumerable<T> self, Func<T, IEnumerable<T>> nodes)
         {
-            Contract.Requires<ArgumentNullException>(self != null);
-            Contract.Requires<ArgumentNullException>(nodes != null);
+            Debug.Assert(self != null);
+            Debug.Assert(nodes != null);
 
             foreach (var i in self)
                 foreach (var j in i.Recurse(nodes))
@@ -88,7 +88,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Extensions
         /// <returns></returns>
         public static IEnumerable<T> ToDebugList<T>(this IEnumerable<T> self)
         {
-            Contract.Requires<ArgumentNullException>(self != null);
+            Debug.Assert(self != null);
 
             // this method gets patched out if not in debug mode
             ToDebugListImpl<T>(ref self);
@@ -99,7 +99,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Extensions
         [Conditional("DEBUG")]
         static void ToDebugListImpl<T>(ref IEnumerable<T> self)
         {
-            Contract.Requires<ArgumentNullException>(self != null);
+            Debug.Assert(self != null);
 
             self = self.ToList();
         }

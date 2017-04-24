@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
@@ -24,7 +25,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
 
         public void AddRange(IEnumerable<ExportProvider> items)
         {
-            Contract.Requires<ArgumentNullException>(items != null);
+            Debug.Assert(items != null);
 
             var all = items.ToList();
             providers.AddRange(all);

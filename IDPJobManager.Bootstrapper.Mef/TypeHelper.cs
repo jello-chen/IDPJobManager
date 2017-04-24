@@ -2,6 +2,7 @@
 using Nancy;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace IDPJobManager.Bootstrapper.Mef
         /// <returns></returns>
         public static bool ReferencesNancy(Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null);
+            Debug.Assert(type != null);
 
             // does type's assembly's references contain Nancy assembly?
             return type.Assembly.GetReferencedAssemblies()

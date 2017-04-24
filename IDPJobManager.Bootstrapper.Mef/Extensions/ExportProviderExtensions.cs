@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace IDPJobManager.Bootstrapper.Mef.Extensions
@@ -23,8 +24,8 @@ namespace IDPJobManager.Bootstrapper.Mef.Extensions
         /// <returns></returns>
         public static IEnumerable<Export> TryGetExports(this ExportProvider provider, ImportDefinition definition, AtomicComposition atomicComposition)
         {
-            Contract.Requires<ArgumentNullException>(provider != null);
-            Contract.Requires<ArgumentNullException>(definition != null);
+            Debug.Assert(provider != null);
+            Debug.Assert(definition != null);
 
             IEnumerable<Export> exports;
             provider.TryGetExports(definition, atomicComposition, out exports);

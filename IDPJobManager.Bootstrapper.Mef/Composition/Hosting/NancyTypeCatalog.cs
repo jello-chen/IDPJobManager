@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
@@ -22,7 +23,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
         public NancyTypeCatalog(params Type[] types)
             : base(types, new NancyReflectionContext())
         {
-            Contract.Requires<NullReferenceException>(types != null);
+            Debug.Assert(types != null);
         }
 
         /// <summary>
@@ -32,7 +33,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
         public NancyTypeCatalog(IEnumerable<Type> types)
             : base(types, new NancyReflectionContext())
         {
-            Contract.Requires<NullReferenceException>(types != null);
+            Debug.Assert(types != null);
         }
 
         public override IEnumerable<Tuple<ComposablePartDefinition, ExportDefinition>> GetExports(ImportDefinition definition)

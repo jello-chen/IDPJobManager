@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Reflection;
 
@@ -23,7 +24,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
         public NancyAssemblyCatalog(Assembly assembly)
             : base(assembly, new NancyReflectionContext())
         {
-            Contract.Requires<NullReferenceException>(assembly != null);
+            Debug.Assert(assembly != null);
         }
 
         /// <summary>
@@ -33,7 +34,7 @@ namespace IDPJobManager.Bootstrapper.Mef.Composition.Hosting
         public NancyAssemblyCatalog(string codeBase)
             : base(codeBase, new NancyReflectionContext())
         {
-            Contract.Requires<NullReferenceException>(codeBase != null);
+            Debug.Assert(codeBase != null);
         }
 
         public override IEnumerable<Tuple<ComposablePartDefinition, ExportDefinition>> GetExports(ImportDefinition definition)
