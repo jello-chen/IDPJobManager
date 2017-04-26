@@ -3,15 +3,23 @@
     using System;
     using Nancy.Hosting.Self;
     using Quartz;
+    using System.ComponentModel.Composition.Hosting;
+    using System.ComponentModel.Composition;
 
     public class IDPJobManagerStarter
     {
-        private Uri uri;
+        private Uri baseUri;
 
         internal static IScheduler Scheduler { get; private set; }
+        private readonly AggregateCatalog catalog;
+        private readonly CompositionContainer container;
+        private NancyHost nancyHost;
 
         private IDPJobManagerStarter()
         {
+            var catalog = new AggregateCatalog(new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.dll"));
+            container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection | CompositionOptions.IsThreadSafe | CompositionOptions.ExportCompositionService);
+            container.ComposeExportedValue(this);
         }
 
         public static IDPJobManagerStarter Configure
@@ -28,31 +36,40 @@
             return this;
         }
 
-        public IDPJobManagerStarter HostedOn(Uri uri)
+        public IDPJobManagerStarter HostedOn(Uri baseUri)
         {
-            this.uri = uri;
+            this.baseUri = baseUri;
             return this;
         }
-        public IDPJobManagerStarter HostedOn(string uri)
+        public IDPJobManagerStarter HostedOn(string baseUri)
         {
-            this.uri = new Uri(uri);
+            this.baseUri = new Uri(baseUri);
             return this;
         }
 
         public IDPJobManagerStarter HostedOnDefault()
         {
-            uri = new Uri(Configuration.ConfigProvider.GetInstance(Scheduler).Uri);
+            baseUri = new Uri(Configuration.ConfigProvider.GetInstance(Scheduler).Uri);
             return this;
         }
 
         public NancyHost Start()
         {
-            if (uri == null)
+            if (baseUri == null)
                 throw new InvalidOperationException("Uri to host on is not specified");
             if (Scheduler == null)
                 throw new InvalidOperationException("Scheduler is not specified");
-
-            return IDPJobManagerBootstrapper.Start(uri);
+            nancyHost = new NancyHost(
+                new IDPJobManagerBootstrapper(container),
+                new HostConfiguration
+                {
+                    UrlReservations = new UrlReservations
+                    {
+                        CreateAutomatically = true,
+                    }
+                },
+                baseUri);
+            return nancyHost;
         }
 
     }

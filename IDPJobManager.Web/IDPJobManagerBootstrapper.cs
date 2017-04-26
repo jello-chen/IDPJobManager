@@ -12,6 +12,7 @@
     using Nancy.Session;
     using IDPJobManager.Bootstrapper.Mef;
     using System.ComponentModel.Composition.Hosting;
+    using System.ComponentModel.Composition.Registration;
 
     internal class IDPJobManagerBootstrapper : MefNancyBootstrapper
     {
@@ -22,6 +23,23 @@
             StaticConfiguration.Caching.EnableRuntimeViewDiscovery = true;
             StaticConfiguration.Caching.EnableRuntimeViewUpdates = true;
             StaticConfiguration.DisableErrorTraces = false;
+        }
+
+        public IDPJobManagerBootstrapper() : base()
+        {
+
+        }
+
+        public IDPJobManagerBootstrapper(bool createDefaultContainer = true)
+            : base(createDefaultContainer)
+        {
+
+        }
+
+        public IDPJobManagerBootstrapper(CompositionContainer container)
+            : base(container)
+        {
+
         }
 
         internal static NancyHost Start(Uri hostUrl)

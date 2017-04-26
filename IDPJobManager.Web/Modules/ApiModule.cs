@@ -6,7 +6,7 @@
     {
         public ApiModule() : base("/Api")
         {
-
+            Get["/"] = _ => "Api";
         }
     }
 }
