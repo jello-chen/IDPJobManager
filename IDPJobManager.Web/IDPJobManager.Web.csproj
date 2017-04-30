@@ -47,13 +47,11 @@
       <HintPath>..\packages\Nancy.1.4.3\lib\net40\Nancy.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Nancy.Authentication.Basic, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Authentication.Basic.1.1\lib\net40\Nancy.Authentication.Basic.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Nancy.Authentication.Basic, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Authentication.Basic.1.4.1\lib\net40\Nancy.Authentication.Basic.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy.Hosting.Self, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Hosting.Self.1.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Nancy.Hosting.Self, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Hosting.Self.1.4.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
     <Reference Include="Nancy.ViewEngines.Razor, Version=1.4.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Viewengines.Razor.1.4.3\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
@@ -82,6 +80,7 @@
   <ItemGroup>
     <Compile Include="Authentication\IDPJobManagerUserIdentity.cs" />
     <Compile Include="Authentication\IDPJobManagerUserValidator.cs" />
+    <Compile Include="Configuration\RazorConfiguration.cs" />
     <Compile Include="ErrorHandling\NotFoundHandler.cs" />
     <Compile Include="Features\CommandInvokerFactory.cs" />
     <Compile Include="Features\ViewProjectionFactory.cs" />
@@ -104,15 +103,33 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="app.manifest" />
-    <EmbeddedResource Include="Content\Fonts\fontawesome-webfont.eot" />
-    <EmbeddedResource Include="Content\Fonts\fontawesome-webfont.ttf" />
-    <EmbeddedResource Include="Content\Fonts\fontawesome-webfont.woff" />
-    <EmbeddedResource Include="Content\Fonts\fontawesome-webfont.woff2" />
-    <EmbeddedResource Include="Content\Fonts\FontAwesome.otf" />
-    <EmbeddedResource Include="Content\Fonts\glyphicons-halflings-regular.eot" />
-    <EmbeddedResource Include="Content\Fonts\glyphicons-halflings-regular.ttf" />
-    <EmbeddedResource Include="Content\Fonts\glyphicons-halflings-regular.woff" />
-    <EmbeddedResource Include="Content\Fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Content\Fonts\fontawesome-webfont.eot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\fontawesome-webfont.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\fontawesome-webfont.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\fontawesome-webfont.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\FontAwesome.otf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\glyphicons-halflings-regular.eot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\glyphicons-halflings-regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\glyphicons-halflings-regular.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\glyphicons-halflings-regular.woff2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -136,34 +153,70 @@
     <Folder Include="Views\Bundles\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content\Scripts\bootstrap.min.js" />
-    <EmbeddedResource Include="Content\Scripts\html5shiv.js" />
-    <EmbeddedResource Include="Content\Scripts\jquery.min.js" />
-    <EmbeddedResource Include="Content\Scripts\metisMenu.min.js" />
-    <EmbeddedResource Include="Content\Scripts\morris.min.js" />
-    <EmbeddedResource Include="Content\Scripts\raphael.min.js" />
-    <EmbeddedResource Include="Content\Scripts\respond.min.js" />
-    <EmbeddedResource Include="Content\Styles\bootstrap.min.css" />
-    <EmbeddedResource Include="Content\Styles\font-awesome.min.css" />
-    <EmbeddedResource Include="Content\Styles\master.css" />
-    <EmbeddedResource Include="Content\Styles\metisMenu.min.css" />
-    <EmbeddedResource Include="Content\Styles\morris.css" />
+    <Content Include="Content\Scripts\bootstrap.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Scripts\html5shiv.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Scripts\jquery.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Scripts\metisMenu.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Scripts\morris.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Scripts\raphael.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Scripts\respond.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Styles\bootstrap.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Styles\font-awesome.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Styles\master.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Styles\metisMenu.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Styles\morris.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content\Scripts\app.js" />
+    <Content Include="Content\Scripts\app.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content\Scripts\morris-data.js" />
+    <Content Include="Content\Scripts\morris-data.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content\Fonts\fontawesome-webfont.svg" />
-    <EmbeddedResource Include="Content\Fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\Fonts\fontawesome-webfont.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\glyphicons-halflings-regular.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content\Images\favicon.ico" />
+    <Content Include="Content\Images\favicon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content\Scripts\jquery.validate.min.js" />
+    <Content Include="Content\Scripts\jquery.validate.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ErrorHandling\Resources\404.html" />

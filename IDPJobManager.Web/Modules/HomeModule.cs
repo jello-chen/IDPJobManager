@@ -1,52 +1,57 @@
 ﻿namespace IDPJobManager.Web.Modules
 {
-	using Core;
-	using Core.SchedulerProviders;
-	using Configuration;
-	using System.Linq;
-	using Core.Domain;
+    using Core;
+    using Core.SchedulerProviders;
+    using Configuration;
+    using System.Linq;
+    using Core.Domain;
+    using System.ComponentModel.Composition;
+    using Nancy;
 
-	public class HomeModule : BaseModule
-	{
-		private static readonly ISchedulerDataProvider SchedulerDataProvider;
+    [Export(typeof(INancyModule))]
+    public class HomeModule : BaseModule
+    {
+        private static readonly ISchedulerDataProvider SchedulerDataProvider;
 
-		static HomeModule()
-		{
-			ISchedulerProvider schedulerProvider = ConfigProvider.GetInstance(IDPJobManagerStarter.Scheduler).SchedulerProvider;
+        static HomeModule()
+        {
+            ISchedulerProvider schedulerProvider = ConfigProvider.GetInstance(IDPJobManagerStarter.Scheduler).SchedulerProvider;
 
-			SchedulerDataProvider = new DefaultSchedulerDataProvider(schedulerProvider);
-		}
+            SchedulerDataProvider = new DefaultSchedulerDataProvider(schedulerProvider);
+        }
 
-		public HomeModule()
-			: base()
-		{
-			Get["/"] = _ =>
-			{
-				ViewBag["SelfVersion"] = GetType().Assembly.GetName().Version.ToString();
-				ViewBag["QuartzVersion"] = typeof(Quartz.Impl.StdScheduler).Assembly.GetName().Version.ToString();
+        public HomeModule()
+            : base()
+        {
+            Get["/"] = _ =>
+            {
 
-				return View["Home/Index", SchedulerDataProvider.Data];
-			};
 
-			Get["/jobdetails/{job}/{group}"] = _ =>
-			{
-				var job = (string)_.job;
-				var group = (string)_.group;
+                ViewBag["SelfVersion"] = GetType().Assembly.GetName().Version.ToString();
+                ViewBag["QuartzVersion"] = typeof(Quartz.Impl.StdScheduler).Assembly.GetName().Version.ToString();
 
-				var detailsData = SchedulerDataProvider.GetJobDetailsData(job, group);
+                return View["Index", SchedulerDataProvider.Data];
+            };
 
-				var jobDataMap = detailsData
-					.JobDataMap
-					.Select(pair => new Property(pair.Key.ToString(), pair.Value))
-					.ToArray();
+            Get["/jobdetails/{job}/{group}"] = _ =>
+            {
+                var job = (string)_.job;
+                var group = (string)_.group;
 
-				var jobProperties = detailsData
-					.JobProperties
-					.Select(pair => new Property(pair.Key, pair.Value))
-					.ToArray();
+                var detailsData = SchedulerDataProvider.GetJobDetailsData(job, group);
 
-				return View["Content_Job_Details.haml", new { datamaps = jobDataMap, properties = jobProperties }];
-			};
-		}
-	}
+                var jobDataMap = detailsData
+                    .JobDataMap
+                    .Select(pair => new Property(pair.Key.ToString(), pair.Value))
+                    .ToArray();
+
+                var jobProperties = detailsData
+                    .JobProperties
+                    .Select(pair => new Property(pair.Key, pair.Value))
+                    .ToArray();
+
+                return View["Content_Job_Details.haml", new { datamaps = jobDataMap, properties = jobProperties }];
+            };
+        }
+    }
 }

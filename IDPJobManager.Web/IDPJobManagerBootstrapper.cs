@@ -7,12 +7,10 @@
     using Nancy.ViewEngines;
     using Nancy;
     using Nancy.Authentication.Basic;
-    using Nancy.TinyIoc;
     using Nancy.Hosting.Self;
     using Nancy.Session;
     using IDPJobManager.Bootstrapper.Mef;
     using System.ComponentModel.Composition.Hosting;
-    using System.ComponentModel.Composition.Registration;
 
     internal class IDPJobManagerBootstrapper : MefNancyBootstrapper
     {

@@ -19,7 +19,7 @@
         {
             var catalog = new AggregateCatalog(new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.dll"));
             container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection | CompositionOptions.IsThreadSafe | CompositionOptions.ExportCompositionService);
-            container.ComposeExportedValue(this);
+            container.ComposeExportedValue(container);
         }
 
         public static IDPJobManagerStarter Configure
@@ -69,6 +69,7 @@
                     }
                 },
                 baseUri);
+            nancyHost.Start();
             return nancyHost;
         }
 
