@@ -6,6 +6,7 @@ using IDPJobManager.Web.Configuration;
 using IDPJobManager.Core;
 using Quartz;
 using IDPJobManager.Jobs;
+using System.Configuration;
 
 namespace IDPJobManager
 {
@@ -52,11 +53,21 @@ namespace IDPJobManager
                     .HostedOnDefault()
                     .Start())
             {
+                ConfigureDBConnectionString();
                 scheduler.Start();
                 Console.Read();
             }
 
             Console.ReadKey();
+        }
+
+        static void ConfigureDBConnectionString()
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["IDP-JobManager"];
+            if (connectionString == null)
+                throw new InvalidOperationException("Not configure `IDP-JobManager` connection string.");
+            Core.Config.GlobalConfig.ConnectionString = connectionString.ConnectionString;
+            Core.Config.GlobalConfig.ProviderName = connectionString.ProviderName;
         }
     }
 }

@@ -25,11 +25,8 @@
         {
             Get["/"] = _ =>
             {
-
-
                 ViewBag["SelfVersion"] = GetType().Assembly.GetName().Version.ToString();
                 ViewBag["QuartzVersion"] = typeof(Quartz.Impl.StdScheduler).Assembly.GetName().Version.ToString();
-
                 return View["Index", SchedulerDataProvider.Data];
             };
 

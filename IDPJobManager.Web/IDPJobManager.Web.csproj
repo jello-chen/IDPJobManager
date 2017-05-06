@@ -137,6 +137,7 @@
     <EmbeddedResource Include="Views\Home\Index.cshtml" />
     <EmbeddedResource Include="Views\Shared\_Layout.cshtml" />
     <EmbeddedResource Include="Views\Account\Login.cshtml" />
+    <EmbeddedResource Include="Views\Job\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IDPJobManager.Bootstrapper.Mef\IDPJobManager.Bootstrapper.Mef.csproj">
@@ -153,6 +154,9 @@
     <Folder Include="Views\Bundles\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Scripts\bootstrap-dialog.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Scripts\bootstrap.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -172,6 +176,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Scripts\respond.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Scripts\vue.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Styles\bootstrap-dialog.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Styles\bootstrap.min.css">

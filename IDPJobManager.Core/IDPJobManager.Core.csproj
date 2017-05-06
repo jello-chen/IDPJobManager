@@ -38,11 +38,19 @@
       <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EasyORM">
+      <HintPath>..\..\..\..\..\OpenSource\Repos\EasyORM\src\EasyORM\EasyORM\bin\Debug\EasyORM.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\OpenSource\Repos\EasyORM\src\EasyORM\EasyORM\bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Quartz, Version=2.3.2.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
       <HintPath>..\packages\Quartz.2.3.2\lib\net40\Quartz.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -56,11 +64,13 @@
   <ItemGroup>
     <Compile Include="CommandResult.cs" />
     <Compile Include="Commands\Account\LoginCommand.cs" />
+    <Compile Include="Commands\Job\DeleteJobCommandInvoker.cs" />
     <Compile Include="Config\GlobalConfig.cs" />
     <Compile Include="DefaultSchedulerDataProvider.cs" />
     <Compile Include="Domain\Activity.cs" />
     <Compile Include="Domain\ActivityNode.cs" />
     <Compile Include="Domain\ActivityStatus.cs" />
+    <Compile Include="Domain\Job.cs" />
     <Compile Include="Domain\JobData.cs" />
     <Compile Include="Domain\JobDetailsData.cs" />
     <Compile Include="Domain\JobGroupData.cs" />
@@ -75,6 +85,7 @@
     <Compile Include="Domain\TriggerTypes\TriggerType.cs" />
     <Compile Include="ICommandInvoker.cs" />
     <Compile Include="ICommandInvokerFactory.cs" />
+    <Compile Include="IDPJobManagerDataContext.cs" />
     <Compile Include="ISchedulerDataProvider.cs" />
     <Compile Include="IViewProjection.cs" />
     <Compile Include="IViewProjectionFactory.cs" />
@@ -86,6 +97,7 @@
     <Compile Include="Utils\DateTimeOffsetExtensions.cs" />
     <Compile Include="Utils\DbHelper.cs" />
     <Compile Include="Utils\Ensure.cs" />
+    <Compile Include="ViewProjections\Job\AllJobsViewProjection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="job_scheduling_data_2_0.xsd">

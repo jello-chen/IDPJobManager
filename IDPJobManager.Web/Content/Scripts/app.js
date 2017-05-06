@@ -4,7 +4,7 @@
 
 //Loads the correct sidebar on window load,
 //collapses the sidebar on window resize.
-// Sets the min-height of #page-wrapper to window size
+// Sets the min-height of #container to window size
 $(function () {
     $(window).bind("load resize", function () {
         var topOffset = 50;
@@ -20,7 +20,7 @@ $(function () {
         height = height - topOffset;
         if (height < 1) height = 1;
         if (height > topOffset) {
-            $("#page-wrapper").css("min-height", (height) + "px");
+            $("#container").css("min-height", (height) + "px");
         }
     });
 
