@@ -38,8 +38,9 @@
       <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="EasyORM">
-      <HintPath>..\..\..\..\..\OpenSource\Repos\EasyORM\src\EasyORM\EasyORM\bin\Debug\EasyORM.dll</HintPath>
+    <Reference Include="EasyORM, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3e8b7b58dc4e47be, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\OpenSource\Repos\EasyORM\src\EasyORM\EasyORM\bin\Debug\EasyORM.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

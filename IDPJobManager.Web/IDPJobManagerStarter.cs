@@ -17,7 +17,7 @@
 
         private IDPJobManagerStarter()
         {
-            var catalog = new AggregateCatalog(new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.dll"));
+            var catalog = new AggregateCatalog(new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "IDPJobManager*.dll"));
             container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection | CompositionOptions.IsThreadSafe | CompositionOptions.ExportCompositionService);
             container.ComposeExportedValue(container);
         }

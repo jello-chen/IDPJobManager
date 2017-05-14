@@ -9,38 +9,35 @@
     using System.ComponentModel.Composition;
 
     [Export(typeof(INancyModule))]
-    public class JobModule : NancyModule
+    public class JobModule : BaseModule
     {
         private readonly IViewProjectionFactory viewProjectionFactory;
         private readonly ICommandInvokerFactory commandInvokerFactory;
 
         [ImportingConstructor]
-        public JobModule(IViewProjectionFactory viewProjectionFactory, 
+        public JobModule(IViewProjectionFactory viewProjectionFactory,
             ICommandInvokerFactory commandInvokerFactory) : base("/Job")
         {
             this.viewProjectionFactory = viewProjectionFactory;
             this.commandInvokerFactory = commandInvokerFactory;
 
-            Get["/{page?1}"] = _ => ShowJobs(_.page);
+            Get["/"] = _ => View["List"];
+            Get["/GetJobList"] = _ => GetJobList();
             Get["/Delete/{id:guid}"] = _ => DeleteJob(this.Bind<DeleteJobCommand>());
         }
 
 
-        private Negotiator ShowJobs(int page)
+        private dynamic GetJobList()
         {
-            var model = viewProjectionFactory.Get<AllJobsBindingModel, AllJobsViewModel>(new AllJobsBindingModel
-            {
-                Page = page,
-                Take = 20
-            });
-            return View["List", model];
+            var model = this.Bind<AllJobsBindingModel>();
+            var vm = viewProjectionFactory.Get<AllJobsBindingModel, AllJobsViewModel>(model);
+            return Response.AsJson(vm);
         }
 
         private dynamic DeleteJob(DeleteJobCommand command)
         {
-            commandInvokerFactory.Handle<DeleteJobCommand, CommandResult>(command);
-            string returnURL = Request.Headers.Referrer;
-            return Response.AsRedirect(returnURL);
+            var commandResult = commandInvokerFactory.Handle<DeleteJobCommand, CommandResult>(command);
+            return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
         }
     }
 }

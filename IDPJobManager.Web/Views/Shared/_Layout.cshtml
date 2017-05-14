@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>IDP Job Manager</title>
+    <title>@ViewBag.Title-IDP Job Manager</title>
     <link rel="SHORTCUT ICON" href="/Content/Images/favicon.ico" />
     <!-- Bootstrap Core CSS -->
     <link href="/Content/Styles/bootstrap.min.css" rel="stylesheet">
@@ -19,6 +19,7 @@
     <!-- Custom Fonts -->
     <link href="/Content/Styles/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="/Content/Styles/bootstrap-dialog.min.css" rel="stylesheet" type="text/css">
+    @RenderSection("Style", required: false)
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -179,8 +180,8 @@
     <script src="/Content/Scripts/morris.min.js"></script>
     <script src="/Content/Scripts/morris-data.js"></script>
     <script src="/Content/Scripts/bootstrap-dialog.min.js"></script>
-    <script src="/Content/Scripts/app.js"></script>
     <script src="/Content/Scripts/vue.js"></script>
+    <script src="/Content/Scripts/app.js"></script>
     @RenderSection("Scripts", false)
 </body>
 </html>
