@@ -1,19 +1,34 @@
 ﻿using System;
 using Quartz.Impl;
 using IDPJobManager.Web;
-using IDPJobManager.Core.SchedulerProviders;
-using IDPJobManager.Web.Configuration;
-using IDPJobManager.Core;
 using Quartz;
-using IDPJobManager.Jobs;
 using System.Configuration;
+using Topshelf;
 
 namespace IDPJobManager
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
+            return (int)HostFactory.Run(x =>
+            {
+                x.UseAssemblyInfoForServiceInfo();
+
+                var scheduler = CreateScheduler();
+                using (IDPJobManagerStarter.Configure.UsingScheduler(scheduler)
+                        .HostedOnDefault()
+                        .Start())
+                {
+                    ConfigureDBConnectionString();
+                    scheduler.Start();
+                    Console.WriteLine($"Web host started on {IDPJobManagerStarter.Configure.BaseUri}.");
+                    Console.Read();
+                }
+
+                x.EnablePauseAndContinue();
+            });
+
             ////1.首先创建一个作业调度池
             //var properties = new NameValueCollection();
             ////存储类型
@@ -32,33 +47,19 @@ namespace IDPJobManager
             //// First we must get a reference to a scheduler
             //var schedulerFactory = new StdSchedulerFactory(properties);
             //var scheduler = schedulerFactory.GetScheduler();
-            
 
-            var schedulerFactory = new StdSchedulerFactory();
-            var scheduler = schedulerFactory.GetScheduler();
-            var jobTrigger = TriggerBuilder.Create().WithSimpleSchedule(x => x.WithIntervalInSeconds(10).WithRepeatCount(int.MaxValue)).Build();
-            var jobKey = JobKey.Create("job1", "jobgroup1");
-            IJobDetail jobDetail = scheduler.GetJobDetail(jobKey);
-            if (jobDetail == null)
-            {
-                jobDetail = JobBuilder.Create<HelloJob>().WithIdentity(jobKey).Build();
-                scheduler.ScheduleJob(jobDetail, jobTrigger);
-            }
-            else
-            {
-                scheduler.ResumeJob(jobKey);
-            }
-
-            using (IDPJobManagerStarter.Configure.UsingScheduler(scheduler)
-                    .HostedOnDefault()
-                    .Start())
-            {
-                ConfigureDBConnectionString();
-                scheduler.Start();
-                Console.Read();
-            }
-
-            Console.ReadKey();
+            //var jobTrigger = TriggerBuilder.Create().WithSimpleSchedule(x => x.WithIntervalInSeconds(10).WithRepeatCount(int.MaxValue)).Build();
+            //var jobKey = JobKey.Create("job1", "jobgroup1");
+            //IJobDetail jobDetail = scheduler.GetJobDetail(jobKey);
+            //if (jobDetail == null)
+            //{
+            //    jobDetail = JobBuilder.Create<HelloJob>().WithIdentity(jobKey).Build();
+            //    scheduler.ScheduleJob(jobDetail, jobTrigger);
+            //}
+            //else
+            //{
+            //    scheduler.ResumeJob(jobKey);
+            //}
         }
 
         static void ConfigureDBConnectionString()
@@ -68,6 +69,17 @@ namespace IDPJobManager
                 throw new InvalidOperationException("Not configure `IDP-JobManager` connection string.");
             Core.Config.GlobalConfig.ConnectionString = connectionString.ConnectionString;
             Core.Config.GlobalConfig.ProviderName = connectionString.ProviderName;
+        }
+
+        static IScheduler CreateScheduler()
+        {
+            var schedulerFactory = new StdSchedulerFactory();
+            return schedulerFactory.GetScheduler();
+        }
+
+        static void ScheduleJobs()
+        {
+
         }
     }
 }

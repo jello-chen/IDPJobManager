@@ -131,9 +131,6 @@
     <Content Include="Content\Fonts\glyphicons-halflings-regular.woff2">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Content\Styles\bootstrap.min.css.map">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>

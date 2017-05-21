@@ -15,6 +15,8 @@
         private readonly CompositionContainer container;
         private NancyHost nancyHost;
 
+        public Uri BaseUri { get { return baseUri; } }
+
         private IDPJobManagerStarter()
         {
             var catalog = new AggregateCatalog(new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "IDPJobManager*.dll"));

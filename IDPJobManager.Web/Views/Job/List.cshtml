@@ -19,15 +19,14 @@
         <form class="form-horizontal" role="form">
             <fieldset>
                 <div class="form-group">
-
                     <label class="col-sm-1 control-label" for="ds_host">Job Name</label>
                     <div class="col-sm-3">
-                        <input class="form-control" id="ds_host" type="text" placeholder="Please input job name" />
+                        <input class="form-control" id="ds_host" type="text" placeholder="Please input job name" v-model="JobName" />
                     </div>
                     <label class="col-sm-2 control-label" style="width:120px" for="dtStart">Create Time</label>
                     <div class="col-sm-2" style="width:240px;">
                         <div class='input-group date form_dateperiod' id='dtStart'>
-                            <input type='text' class="form-control" />
+                            <input type='text' class="form-control" v-model="StartDate" />
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
@@ -36,14 +35,14 @@
                     <label class="col-sm-1 control-label" style="width:10px;">-</label>
                     <div class="col-sm-2" style="width:240px;">
                         <div class='input-group date form_dateperiod' id='dtEnd'>
-                            <input type='text' class="form-control" />
+                            <input type='text' class="form-control" v-model="EndDate" />
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
                         </div>
                     </div>
                     <div class="col-sm-1">
-                        <button class="btn btn-primary" id="btn_search">Search</button>
+                        <button class="btn btn-primary" id="btn_search" v-on:click="searchJobs">Search</button>
                     </div>
                 </div>
             </fieldset>
@@ -80,8 +79,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <template v-if="rows.length>0" v-for="(row, index) in rows">
-                                <tr v-if="index>=(curpage-1)*pagesize&&index<curpage*pagesize">
+                            <template v-for="(row, index) in Rows">
+                                <tr v-if="index>=(Page-1)*Take&&index<Page*Take">
                                     <td>{{row.JobName}}</td>
                                     <td>{{row.AssemblyName}}</td>
                                     <td>{{row.ClassName}}</td>
@@ -89,17 +88,17 @@
                                     <td>{{row.StartTime}}</td>
                                     <td>{{row.EndTime}}</td>
                                     <td>
-                                        <a href="/Job/Edit/{{row.ID}}" title="Edit"><i class="glyphicon glyphicon-play"></i></a>
-                                        <a href="/Job/Edit/{{row.ID}}" title="Edit"><i class="glyphicon glyphicon-pause"></i></a>
-                                        <a href="/Job/Edit/{{row.ID}}" title="Edit"><i class="glyphicon glyphicon-stop"></i></a>
-                                        <a href="/Job/Edit/{{row.ID}}" title="Edit"><i class="glyphicon glyphicon-pencil"></i></a>
+                                        <a :href="'/Job/Play/' + row.ID" title="Play"><i class="glyphicon glyphicon-play"></i></a>
+                                        <a :href="'/Job/Pause/' + row.ID" title="Pause"><i class="glyphicon glyphicon-pause"></i></a>
+                                        <a :href="'/Job/Stop/' + row.ID" title="Stop"><i class="glyphicon glyphicon-stop"></i></a>
+                                        <a :href="'/Job/Edit/' + row.ID" title="Edit"><i class="glyphicon glyphicon-pencil"></i></a>
                                         <a href="javascript:void(0)" title="Delete" v-on:click="deleteJob('{{row.ID}}')"><i class="glyphicon glyphicon-remove"></i></a>
                                     </td>
                                 </tr>
                             </template>
-                            <template v-else>
+                            <template v-if="Rows.length == 0">
                                 <tr>
-                                    <td colspan="4">No data</td>
+                                    <td colspan="7">No data</td>
                                 </tr>
                             </template>
                         </tbody>
@@ -107,11 +106,11 @@
                 </div>
                 <nav style="float:right;">
                     <ul class="pagination pagination-lg">
-                        <template v-for="page in Math.ceil(rows.length/pagesize)">
-                            <li v-on:click="PrePage()" id="prepage" v-if="page==1" class="disabled"><a href="#">上一页</a></li>
-                            <li v-if="page==1" class="active" v-on:click="NumPage(page, $event)"><a href="#">{{page}}</a></li>
-                            <li v-else v-on:click="NumPage(page, $event)"><a href="#">{{page}}</a></li>
-                            <li id="nextpage" v-on:click="NextPage()" v-if="page==Math.ceil(rows.length/pagesize)"><a href="#">下一页</a></li>
+                        <template v-for="pageIndex in Math.ceil(Rows.length/Take)">
+                            <li v-on:click="PrePage()" id="prepage" v-if="pageIndex==1" class="disabled"><a href="#">上一页</a></li>
+                            <li v-if="pageIndex==1" class="active" v-on:click="NumPage(pageIndex, $event)"><a href="#">{{pageIndex}}</a></li>
+                            <li v-else v-on:click="NumPage(pageIndex, $event)"><a href="#">{{pageIndex}}</a></li>
+                            <li id="nextpage" v-on:click="NextPage()" v-if="pageIndex==Math.ceil(Rows.length/Take)"><a href="#">下一页</a></li>
                         </template>
                     </ul>
                 </nav>
@@ -146,12 +145,23 @@
         }
 
         //Model
-        var data = {
-            rows: [
-                
+        const data = {
+            Rows: [
+                {
+                    ID: 1,
+                    JobName: 'jello',
+                    AssemblyName: 'sjlsj',
+                    ClassName: 'jsljfe',
+                    CronExpression: 'eee',
+                    StartTime: '2017-04-22 20:00:00',
+                    EndTime: '2017-05-02 00:00:00'
+                }
             ],
-            pagesize: 10,
-            curpage: 1,//当前页的页码
+            Page: 1,//当前页的页码
+            Take: 10,
+            JobName: '',
+            StartDate: '',
+            EndDate: ''
         };
 
         new Vue({
@@ -162,10 +172,10 @@
             data: data,
             methods: {
                 searchJobs: function () {
-                    $.get('/Job/GetJobList/' + id, function (data) {
-                        if (data) {
+                    $.get('/Job/GetJobList/', data, function (result) {
+                        if (result) {
                             if (data.success === true) {
-                                window.location.reload();
+                                data.Rows = result.data;
                             }
                             else {
                                 BootstrapDialog.show({
@@ -206,10 +216,10 @@
                 },
                 //点击页码的方法
                 NumPage: function (num, event) {
-                    if (this.curpage == num) {
+                    if (this.Page == num) {
                         return;
                     }
-                    this.curpage = num;
+                    this.Page = num;
                     $(".pagination li").removeClass("active");
                     if (event.target.tagName.toUpperCase() == "LI") {
                         $(event.target).addClass("active");
@@ -217,44 +227,18 @@
                     else {
                         $(event.target).parent().addClass("active");
                     }
-                    if (this.curpage == 1) {
+                    if (this.Page == 1) {
                         $("#prepage").addClass("disabled");
                     }
                     else {
                         $("#prepage").removeClass("disabled");
                     }
-                    if (this.curpage == Math.ceil(this.rows.length / this.pagesize)) {
+                    if (this.Page == Math.ceil(this.Rows.length / this.Take)) {
                         $("#nextpage").addClass("disabled");
                     }
                     else {
                         $("#nextpage").removeClass("disabled");
                     }
-                },
-                loadData() {
-                    let options = {
-                        params: {
-                            take: this.pagination.per_page,
-                            page: this.pagination.current_page,
-                            /* additional parameters */
-                        }
-                    };
-                    console.log("load data");
-                    console.log(this.$http);
-                    this.$http.get('/Job/GetJobList', options).then(response => {
-                        this.jobs = response.data.data;
-
-                        // Overwrite pagination object
-                        this.pagination = response.data.pagination; // API response edited to have pagination data under pagination object
-
-                        // Or overwrite only values
-                        /*
-                          this.pagination.current_page = response.data.current_page;
-                          this.pagination.last_page = response.data.last_page;
-                          ...
-                        */
-                    }, error => {
-                        // handle error
-                    });
                 }
             }
         });

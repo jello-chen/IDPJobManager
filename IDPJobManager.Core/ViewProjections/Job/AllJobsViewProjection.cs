@@ -21,10 +21,23 @@ namespace IDPJobManager.Core.ViewProjections.Job
         {
             var skip = (input.Page - 1) * input.Take;
 
-            var jobs = (from j in dataContext.Set<JobInfo>()
+            var query = from j in dataContext.Set<JobInfo>()
                         where j.IsDelete == 0
-                        orderby j.CreatedTime descending, j.ModifyTime descending
-                        select j)
+                        //orderby j.CreatedTime descending, j.ModifyTime descending
+                        select j;
+
+            if (!string.IsNullOrEmpty(input.JobName))
+                query = query.Where(j => j.JobName.Contains(input.JobName));
+
+            if (input.StartDate != DateTime.MinValue)
+                query = query.Where(j => j.CreatedTime >= input.StartDate);
+
+            if (input.EndDate != DateTime.MinValue)
+                query = query.Where(j => j.CreatedTime <= input.EndDate);
+
+            var jobs =  query
+                        .OrderByDescending(j => j.CreatedTime)
+                        .ThenByDescending(j => j.ModifyTime)
                         .Skip(skip)
                         .Take(input.Take + 1)
                         .ToList();

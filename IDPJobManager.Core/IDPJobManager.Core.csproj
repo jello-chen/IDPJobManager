@@ -30,21 +30,23 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Logging, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.Logging.3.0.0\lib\net40\Common.Logging.dll</HintPath>
+    <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Common.Logging.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\net40\Common.Logging.Core.dll</HintPath>
+    <Reference Include="Common.Logging.Core, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="EasyORM, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3e8b7b58dc4e47be, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\OpenSource\Repos\EasyORM\src\EasyORM\EasyORM\bin\Debug\EasyORM.dll</HintPath>
+    <Reference Include="EasyORM">
+      <HintPath>..\..\EasyORM\src\EasyORM\EasyORM\bin\Debug\EasyORM.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\OpenSource\Repos\EasyORM\src\EasyORM\EasyORM\bin\Debug\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\EasyORM\src\EasyORM\EasyORM\bin\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Quartz, Version=2.3.2.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
       <HintPath>..\packages\Quartz.2.3.2\lib\net40\Quartz.dll</HintPath>
@@ -84,6 +86,7 @@
     <Compile Include="Domain\TriggerTypes\CronTriggerType.cs" />
     <Compile Include="Domain\TriggerTypes\SimpleTriggerType.cs" />
     <Compile Include="Domain\TriggerTypes\TriggerType.cs" />
+    <Compile Include="Extensions\QuartzExtension.cs" />
     <Compile Include="ICommandInvoker.cs" />
     <Compile Include="ICommandInvokerFactory.cs" />
     <Compile Include="IDPJobManagerDataContext.cs" />
@@ -95,12 +98,14 @@
     <Compile Include="SchedulerProviders\SchedulerProviderException.cs" />
     <Compile Include="SchedulerProviders\StdSchedulerProvider.cs" />
     <Compile Include="SchedulerProviders\TriggerTypeExtractor.cs" />
+    <Compile Include="Utils\AssemblyScanner.cs" />
     <Compile Include="Utils\DateTimeOffsetExtensions.cs" />
     <Compile Include="Utils\DbHelper.cs" />
     <Compile Include="Utils\Ensure.cs" />
     <Compile Include="ViewProjections\Job\AllJobsViewProjection.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
