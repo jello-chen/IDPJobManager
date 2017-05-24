@@ -1,5 +1,4 @@
 ﻿using IDPJobManager.Core.Domain;
-using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 
@@ -29,8 +28,8 @@ namespace IDPJobManager.Core.Commands.Job
         }
     }
 
-    public class DeleteJobCommand
+    public class DeleteJobCommand : JobCommand
     {
-        public Guid ID { get; set; }
+
     }
 }

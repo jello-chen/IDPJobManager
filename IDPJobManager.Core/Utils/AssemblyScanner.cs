@@ -19,12 +19,12 @@ namespace IDPJobManager.Core.Utils
 
         public Type GetType(string assemblyName,string className)
         {
-            var assemblyPath = $"{assemblyDirectory}{assemblyName}.dll";
+            var assemblyPath = $"{assemblyDirectory}\\{assemblyName}.dll";
             var assembly = default(Assembly);
             if (assemblyCache.ContainsKey(assemblyPath))
                 assembly = assemblyCache[assemblyPath];
             else
-                assembly = AppDomain.CurrentDomain.Load(assemblyPath);
+                assembly = Assembly.LoadFile(assemblyPath);
             return assembly.GetType(className, true, true);
         }
     }

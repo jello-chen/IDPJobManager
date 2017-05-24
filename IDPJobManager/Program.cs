@@ -4,6 +4,7 @@ using IDPJobManager.Web;
 using Quartz;
 using System.Configuration;
 using Topshelf;
+using IDPJobManager.Core.Extensions;
 
 namespace IDPJobManager
 {
@@ -13,6 +14,8 @@ namespace IDPJobManager
         {
             return (int)HostFactory.Run(x =>
             {
+                x.UseLog4Net("log4net.config");
+
                 x.UseAssemblyInfoForServiceInfo();
 
                 var scheduler = CreateScheduler();
@@ -21,7 +24,7 @@ namespace IDPJobManager
                         .Start())
                 {
                     ConfigureDBConnectionString();
-                    scheduler.Start();
+                    scheduler.StartRunning().ScheduleJobs();
                     Console.WriteLine($"Web host started on {IDPJobManagerStarter.Configure.BaseUri}.");
                     Console.Read();
                 }
@@ -75,11 +78,6 @@ namespace IDPJobManager
         {
             var schedulerFactory = new StdSchedulerFactory();
             return schedulerFactory.GetScheduler();
-        }
-
-        static void ScheduleJobs()
-        {
-
         }
     }
 }

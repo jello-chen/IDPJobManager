@@ -18,8 +18,16 @@ namespace IDPJobManager.Web.Features
 
         public TOut Handle<TIn, TOut>(TIn input)
         {
-            var commandInvoker = _container.GetExportedValue<ICommandInvoker<TIn, TOut>>();
-            return commandInvoker.Execute(input);
+            try
+            {
+                var commandInvoker = _container.GetExportedValue<ICommandInvoker<TIn, TOut>>();
+                return commandInvoker.Execute(input);
+            }
+            catch (System.Exception e)
+            {
+
+                throw;
+            }
         }
     }
 }

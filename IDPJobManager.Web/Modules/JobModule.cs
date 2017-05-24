@@ -1,11 +1,10 @@
 ﻿namespace IDPJobManager.Web.Modules
 {
-    using IDPJobManager.Core;
-    using IDPJobManager.Core.Commands.Job;
-    using IDPJobManager.Core.ViewProjections.Job;
+    using Core;
+    using Core.Commands.Job;
+    using Core.ViewProjections.Job;
     using Nancy;
     using Nancy.ModelBinding;
-    using Nancy.Responses.Negotiation;
     using System.ComponentModel.Composition;
 
     [Export(typeof(INancyModule))]
@@ -23,7 +22,8 @@
 
             Get["/"] = _ => View["List"];
             Get["/GetJobList"] = _ => GetJobList();
-            Get["/Delete/{id:guid}"] = _ => DeleteJob(this.Bind<DeleteJobCommand>());
+            Post["/Delete"] = _ => DeleteJob(this.Bind<DeleteJobCommand>());
+            Post["/Start"] = _ => StartJob(this.Bind<StartJobCommand>());
         }
 
 
@@ -37,6 +37,12 @@
         private dynamic DeleteJob(DeleteJobCommand command)
         {
             var commandResult = commandInvokerFactory.Handle<DeleteJobCommand, CommandResult>(command);
+            return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
+        }
+
+        private dynamic StartJob(StartJobCommand command)
+        {
+            var commandResult = commandInvokerFactory.Handle<StartJobCommand, CommandResult>(command);
             return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
         }
     }

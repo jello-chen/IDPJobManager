@@ -68,12 +68,14 @@
     <Compile Include="CommandResult.cs" />
     <Compile Include="Commands\Account\LoginCommand.cs" />
     <Compile Include="Commands\Job\DeleteJobCommandInvoker.cs" />
+    <Compile Include="Commands\Job\StartJobCommandInvoker.cs" />
     <Compile Include="Config\GlobalConfig.cs" />
     <Compile Include="DefaultSchedulerDataProvider.cs" />
     <Compile Include="Domain\Activity.cs" />
     <Compile Include="Domain\ActivityNode.cs" />
     <Compile Include="Domain\ActivityStatus.cs" />
     <Compile Include="Domain\Job.cs" />
+    <Compile Include="Domain\JobCommand.cs" />
     <Compile Include="Domain\JobData.cs" />
     <Compile Include="Domain\JobDetailsData.cs" />
     <Compile Include="Domain\JobGroupData.cs" />

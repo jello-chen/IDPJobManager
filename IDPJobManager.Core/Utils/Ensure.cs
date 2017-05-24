@@ -8,11 +8,11 @@ namespace IDPJobManager.Core.Utils
 {
     public static class Ensure
     {
-        public static void Requires<TException>(bool condition) where TException : Exception,new ()
+        public static void Requires<TException>(bool condition, string message = null) where TException : Exception
         {
-            if(!condition)
+            if (!condition)
             {
-                throw new TException();
+                throw (TException)Activator.CreateInstance(typeof(TException), message);
             }
         }
     }

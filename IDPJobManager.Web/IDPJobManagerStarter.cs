@@ -10,6 +10,7 @@
     {
         private Uri baseUri;
 
+        public static IDPJobManagerStarter Configure = new IDPJobManagerStarter();
         internal static IScheduler Scheduler { get; private set; }
         private readonly AggregateCatalog catalog;
         private readonly CompositionContainer container;
@@ -22,14 +23,6 @@
             var catalog = new AggregateCatalog(new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "IDPJobManager*.dll"));
             container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection | CompositionOptions.IsThreadSafe | CompositionOptions.ExportCompositionService);
             container.ComposeExportedValue(container);
-        }
-
-        public static IDPJobManagerStarter Configure
-        {
-            get
-            {
-                return new IDPJobManagerStarter();
-            }
         }
 
         public IDPJobManagerStarter UsingScheduler(IScheduler scheduler)
@@ -72,6 +65,7 @@
                 },
                 baseUri);
             nancyHost.Start();
+            container.ComposeExportedValue(Scheduler);
             return nancyHost;
         }
 

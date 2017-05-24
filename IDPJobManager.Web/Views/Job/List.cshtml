@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <div class="col-sm-1">
-                        <button class="btn btn-primary" id="btn_search" v-on:click="searchJobs">Search</button>
+                        <button class="btn btn-primary" id="btn_search" v-on:click="searchJobs($event)">Search</button>
                     </div>
                 </div>
             </fieldset>
@@ -70,6 +70,7 @@
                         <thead>
                             <tr>
                                 <th>Job Name</th>
+                                <th>Status</th>
                                 <th>Assembly Name</th>
                                 <th>Class Name</th>
                                 <th>Cron Expression</th>
@@ -82,23 +83,24 @@
                             <template v-for="(row, index) in Rows">
                                 <tr v-if="index>=(Page-1)*Take&&index<Page*Take">
                                     <td>{{row.JobName}}</td>
+                                    <td><label class="btn-circle"></label></td>
                                     <td>{{row.AssemblyName}}</td>
                                     <td>{{row.ClassName}}</td>
                                     <td>{{row.CronExpression}}</td>
                                     <td>{{row.StartTime}}</td>
                                     <td>{{row.EndTime}}</td>
                                     <td>
-                                        <a :href="'/Job/Play/' + row.ID" title="Play"><i class="glyphicon glyphicon-play"></i></a>
-                                        <a :href="'/Job/Pause/' + row.ID" title="Pause"><i class="glyphicon glyphicon-pause"></i></a>
-                                        <a :href="'/Job/Stop/' + row.ID" title="Stop"><i class="glyphicon glyphicon-stop"></i></a>
+                                        <a v-show="row.Status == 0" href="javascript:void(0)" v-on:click="startJob(row.ID,index,$event)" title="Start"><i class="glyphicon glyphicon-play"></i></a>
+                                        @*<a :href="'/Job/Pause/' + row.ID" title="Pause"><i class="glyphicon glyphicon-pause"></i></a>*@
+                                        <a v-show="row.Status == 1" href="javascript:void(0)" v-on:click="stopJob(row.ID,index,$event)" title="Stop"><i class="glyphicon glyphicon-stop"></i></a>
                                         <a :href="'/Job/Edit/' + row.ID" title="Edit"><i class="glyphicon glyphicon-pencil"></i></a>
-                                        <a href="javascript:void(0)" title="Delete" v-on:click="deleteJob('{{row.ID}}')"><i class="glyphicon glyphicon-remove"></i></a>
+                                        <a href="javascript:void(0)" title="Delete" v-on:click="deleteJob(row.ID,$event)"><i class="glyphicon glyphicon-remove"></i></a>
                                     </td>
                                 </tr>
                             </template>
                             <template v-if="Rows.length == 0">
                                 <tr>
-                                    <td colspan="7">No data</td>
+                                    <td colspan="8">No data</td>
                                 </tr>
                             </template>
                         </tbody>
@@ -122,7 +124,6 @@
     <!-- /.col-lg-12 -->
 </div>
 
-
 @section Scripts{
     <script src="/Content/Scripts/moment-with-locales.js"></script>
     <script src="/Content/Scripts/bootstrap-datetimepicker.min.js"></script>
@@ -145,17 +146,17 @@
         }
 
         //Model
-        const data = {
+        var d = {
             Rows: [
-                {
-                    ID: 1,
-                    JobName: 'jello',
-                    AssemblyName: 'sjlsj',
-                    ClassName: 'jsljfe',
-                    CronExpression: 'eee',
-                    StartTime: '2017-04-22 20:00:00',
-                    EndTime: '2017-05-02 00:00:00'
-                }
+                //{
+                //    ID: 1,
+                //    JobName: 'jello',
+                //    AssemblyName: 'sjlsj',
+                //    ClassName: 'jsljfe',
+                //    CronExpression: 'eee',
+                //    StartTime: '2017-04-22 20:00:00',
+                //    EndTime: '2017-05-02 00:00:00'
+                //}
             ],
             Page: 1,//当前页的页码
             Take: 10,
@@ -169,22 +170,40 @@
             mounted: function () {
                 initDateTimePicker();
             },
-            data: data,
+            data: d,
             methods: {
-                searchJobs: function () {
-                    $.get('/Job/GetJobList/', data, function (result) {
-                        if (result) {
-                            if (data.success === true) {
-                                data.Rows = result.data;
-                            }
-                            else {
-                                BootstrapDialog.show({
-                                    title: 'Delete Job Error',
-                                    message: data.message.toString()
-                                });
+                searchJobs: function (event) {
+                    var that = this;
+                    $.ajax({
+                        url: '/Job/GetJobList/',
+                        data: d,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result) {
+                                that.Rows = result.Jobs;
                             }
                         }
                     });
+                    event.preventDefault();
+                },
+                startJob: function (id, i, event) {
+                    var that = this;
+                    $.ajax({
+                        url: '/Job/Start/',
+                        data: { "ID": id },
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result && result.success) {
+                                that.Rows[i].Status = 1;
+                            }
+                        }
+                    });
+                    event.preventDefault();
+                },
+                stopJob: function (id, event) {
+
                 },
                 deleteJob: function (id) {
                     BootstrapDialog.confirm('Are you sure to delete this job?', function (result) {

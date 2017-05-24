@@ -17,6 +17,7 @@
         static IDPJobManagerBootstrapper()
         {
             JsonSettings.MaxJsonLength = int.MaxValue;
+            JsonSettings.RetainCasing = true;
             StaticConfiguration.EnableRequestTracing = true;
             StaticConfiguration.Caching.EnableRuntimeViewDiscovery = true;
             StaticConfiguration.Caching.EnableRuntimeViewUpdates = true;
