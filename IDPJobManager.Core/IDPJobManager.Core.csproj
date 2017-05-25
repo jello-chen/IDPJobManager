@@ -63,12 +63,25 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Topshelf, Version=3.2.150.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Topshelf.3.2.0\lib\net40-full\Topshelf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Topshelf.Log4Net, Version=3.2.150.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Topshelf.Log4Net.3.2.0\lib\net40-full\Topshelf.Log4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Topshelf.Quartz, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Topshelf.Quartz.0.4.0.1\lib\net45\Topshelf.Quartz.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandResult.cs" />
     <Compile Include="Commands\Account\LoginCommand.cs" />
     <Compile Include="Commands\Job\DeleteJobCommandInvoker.cs" />
     <Compile Include="Commands\Job\StartJobCommandInvoker.cs" />
+    <Compile Include="Commands\Job\StopJobCommandInvoker.cs" />
     <Compile Include="Config\GlobalConfig.cs" />
     <Compile Include="DefaultSchedulerDataProvider.cs" />
     <Compile Include="Domain\Activity.cs" />
@@ -88,6 +101,7 @@
     <Compile Include="Domain\TriggerTypes\CronTriggerType.cs" />
     <Compile Include="Domain\TriggerTypes\SimpleTriggerType.cs" />
     <Compile Include="Domain\TriggerTypes\TriggerType.cs" />
+    <Compile Include="Extensions\ConsoleExtension.cs" />
     <Compile Include="Extensions\QuartzExtension.cs" />
     <Compile Include="ICommandInvoker.cs" />
     <Compile Include="ICommandInvokerFactory.cs" />
@@ -101,9 +115,11 @@
     <Compile Include="SchedulerProviders\StdSchedulerProvider.cs" />
     <Compile Include="SchedulerProviders\TriggerTypeExtractor.cs" />
     <Compile Include="Utils\AssemblyScanner.cs" />
+    <Compile Include="Utils\ConsoleUtil.cs" />
     <Compile Include="Utils\DateTimeOffsetExtensions.cs" />
     <Compile Include="Utils\DbHelper.cs" />
     <Compile Include="Utils\Ensure.cs" />
+    <Compile Include="Utils\NativeWindowApiUtil.cs" />
     <Compile Include="ViewProjections\Job\AllJobsViewProjection.cs" />
   </ItemGroup>
   <ItemGroup>

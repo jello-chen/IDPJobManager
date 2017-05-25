@@ -165,7 +165,7 @@
             EndDate: ''
         };
 
-        new Vue({
+        var vm = new Vue({
             el: "#container",
             mounted: function () {
                 initDateTimePicker();
@@ -185,7 +185,7 @@
                             }
                         }
                     });
-                    event.preventDefault();
+                    if (event) event.preventDefault();
                 },
                 startJob: function (id, i, event) {
                     var that = this;
@@ -202,16 +202,29 @@
                     });
                     event.preventDefault();
                 },
-                stopJob: function (id, event) {
-
+                stopJob: function (id, i, event) {
+                    var that = this;
+                    $.ajax({
+                        url: '/Job/Stop/',
+                        data: { "ID": id },
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result && result.success) {
+                                that.Rows[i].Status = 0;
+                            }
+                        }
+                    });
+                    event.preventDefault();
                 },
-                deleteJob: function (id) {
+                deleteJob: function (id, event) {
+                    var that = this;
                     BootstrapDialog.confirm('Are you sure to delete this job?', function (result) {
                         if (result) {
-                            $.get('/Job/Delete/' + id, function (data) {
+                            $.post('/Job/Delete/', { "ID": id }, function (data) {
                                 if (data) {
                                     if (data.success === true) {
-                                        window.location.reload();
+                                        that.searchJobs();
                                     }
                                     else {
                                         BootstrapDialog.show({
@@ -261,6 +274,6 @@
                 }
             }
         });
-
+        vm.searchJobs();
     </script>
 }

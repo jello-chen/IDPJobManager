@@ -24,6 +24,7 @@
             Get["/GetJobList"] = _ => GetJobList();
             Post["/Delete"] = _ => DeleteJob(this.Bind<DeleteJobCommand>());
             Post["/Start"] = _ => StartJob(this.Bind<StartJobCommand>());
+            Post["/Stop"] = _ => StopJob(this.Bind<StopJobCommand>());
         }
 
 
@@ -43,6 +44,12 @@
         private dynamic StartJob(StartJobCommand command)
         {
             var commandResult = commandInvokerFactory.Handle<StartJobCommand, CommandResult>(command);
+            return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
+        }
+
+        private dynamic StopJob(StopJobCommand command)
+        {
+            var commandResult = commandInvokerFactory.Handle<StopJobCommand, CommandResult>(command);
             return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
         }
     }
