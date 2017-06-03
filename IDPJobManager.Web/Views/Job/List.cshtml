@@ -10,12 +10,6 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Jobs</h1>
-    </div>
-    <!-- /.col-lg-12 -->
-</div>
-<div class="row">
-    <div class="col-lg-12">
         <form class="form-horizontal" role="form">
             <fieldset>
                 <div class="form-group">
@@ -93,7 +87,7 @@
                                         <a v-show="row.Status == 0" href="javascript:void(0)" v-on:click="startJob(row.ID,index,$event)" title="Start"><i class="glyphicon glyphicon-play"></i></a>
                                         @*<a :href="'/Job/Pause/' + row.ID" title="Pause"><i class="glyphicon glyphicon-pause"></i></a>*@
                                         <a v-show="row.Status == 1" href="javascript:void(0)" v-on:click="stopJob(row.ID,index,$event)" title="Stop"><i class="glyphicon glyphicon-stop"></i></a>
-                                        <a :href="'/Job/Edit/' + row.ID" title="Edit"><i class="glyphicon glyphicon-pencil"></i></a>
+                                        <a href="javascript:void(0)" title="Edit" v-on:click="editJob(row.ID,$event)"><i class="glyphicon glyphicon-pencil"></i></a>
                                         <a href="javascript:void(0)" title="Delete" v-on:click="deleteJob(row.ID,$event)"><i class="glyphicon glyphicon-remove"></i></a>
                                     </td>
                                 </tr>
@@ -123,6 +117,74 @@
     </div>
     <!-- /.col-lg-12 -->
 </div>
+<!-- /Edit -->
+<div id="divEdit">
+    <div class="form-horizontal">
+        <div class="form-group">
+
+            <label class="control-label col-sm-4">Job Name</label>
+            <div class="col-sm-6">
+
+                <input class="form-control" type="text" v-model="EditModel.JobName" />
+            </div>
+        </div>
+        <div class="form-group">
+
+            <label class="control-label col-sm-4">Assembly Name</label>
+            <div class="col-sm-6">
+
+                <input class="form-control" type="text" v-model="EditModel.AssemblyName" />
+            </div>
+        </div>
+        <div class="form-group">
+
+            <label class="control-label col-sm-4">Class Name</label>
+            <div class="col-sm-6">
+
+                <input class="form-control" type="text" v-model="EditModel.ClassName" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Cron Expression</label>
+            <div class="col-sm-6">
+                <input class="form-control" type="text" v-model="EditModel.CronExpression" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Start Time</label>
+            <div class="col-sm-6">
+                <div class=input-group date form_dateperiod>
+                    <input type=text class="form-control" v-model="EditModel.StartTime" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">End Time</label>
+            <div class="col-sm-6">
+                <div class=input-group date form_dateperiod>
+                    <input type=text class="form-control" v-model="EditModel.EndTime" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Status</label>
+            <div class="col-sm-6">
+                <label class="radio-inline">
+                    <input type="radio" value="0"> Stop
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" value="1"> Start
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts{
     <script src="/Content/Scripts/moment-with-locales.js"></script>
@@ -145,24 +207,27 @@
             });
         }
 
+        function initEditDateTimePicker() {
+
+        }
+
         //Model
         var d = {
-            Rows: [
-                //{
-                //    ID: 1,
-                //    JobName: 'jello',
-                //    AssemblyName: 'sjlsj',
-                //    ClassName: 'jsljfe',
-                //    CronExpression: 'eee',
-                //    StartTime: '2017-04-22 20:00:00',
-                //    EndTime: '2017-05-02 00:00:00'
-                //}
-            ],
+            Rows: [],
             Page: 1,//当前页的页码
             Take: 10,
             JobName: '',
             StartDate: '',
-            EndDate: ''
+            EndDate: '',
+            EditModel: {
+                ID: '',
+                JobName: '',
+                AssemblyName: '',
+                ClassName: '',
+                CronExpression: '',
+                StartTime: '',
+                EndTime: ''
+            }
         };
 
         var vm = new Vue({
@@ -238,6 +303,33 @@
                         }
                     });
                 },
+                editJob: function (id, event) {
+                    var that = this;
+                    $.get('/Job/Get/', { "ID": id }, function (data) {
+                        if (data && data.success === true) {
+                            that.EditModel = data.model;
+                            BootstrapDialog.show({
+                                title: 'Edit Job',
+                                message: $('<div></div>').html($('#divEdit').html()),
+                                draggable: true,
+                                buttons: [{
+                                    label: 'Cancel',
+                                    action: function (dialog) {
+                                        dialog.close();
+                                    }
+                                }, {
+                                    label: 'OK',
+                                    cssClass: 'btn-primary active',
+                                    hotkey: 13,
+                                    action: function (dialog) {
+                                        dialog.setTitle('Title 2');
+                                    }
+                                }]
+                            });
+                        }
+                    });
+                    event.preventDefault();
+                },
                 //上一页方法
                 PrePage: function (event) {
                     $(".pagination .active").prev().trigger("click");
@@ -275,5 +367,6 @@
             }
         });
         vm.searchJobs();
+
     </script>
 }

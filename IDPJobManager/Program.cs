@@ -14,6 +14,8 @@ namespace IDPJobManager
         {
             return (int)HostFactory.Run(x =>
             {
+                ConfigureDBConnectionString();
+
                 x.UseLog4Net("log4net.config");
 
                 x.UseAssemblyInfoForServiceInfo();
@@ -33,7 +35,6 @@ namespace IDPJobManager
                         .HostedOnDefault()
                         .Start())
                 {
-                    ConfigureDBConnectionString();
                     scheduler.StartRunning().ScheduleJobs();
                     Console.WriteLine($"Web host started on {IDPJobManagerStarter.Configure.BaseUri}.");
                     Console.Read();
@@ -61,8 +62,8 @@ namespace IDPJobManager
             var connectionString = ConfigurationManager.ConnectionStrings["IDP-JobManager"];
             if (connectionString == null)
                 throw new InvalidOperationException("Not configure `IDP-JobManager` connection string.");
-            Core.Config.GlobalConfig.ConnectionString = connectionString.ConnectionString;
-            Core.Config.GlobalConfig.ProviderName = connectionString.ProviderName;
+            Core.Config.GlobalConfiguration.ConnectionString = connectionString.ConnectionString;
+            Core.Config.GlobalConfiguration.ProviderName = connectionString.ProviderName;
         }
 
         static IScheduler CreateScheduler()

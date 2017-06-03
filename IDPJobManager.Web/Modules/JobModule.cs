@@ -22,11 +22,18 @@
 
             Get["/"] = _ => View["List"];
             Get["/GetJobList"] = _ => GetJobList();
+            Get["/Get"] = _ => GetJob();
             Post["/Delete"] = _ => DeleteJob(this.Bind<DeleteJobCommand>());
             Post["/Start"] = _ => StartJob(this.Bind<StartJobCommand>());
             Post["/Stop"] = _ => StopJob(this.Bind<StopJobCommand>());
         }
 
+        private dynamic GetJob()
+        {
+            var model = this.Bind<JobBindingModel>();
+            var vm = viewProjectionFactory.Get<JobBindingModel, JobViewModel>(model);
+            return Response.AsJson(new { success = vm.Success, model = vm.Model });
+        }
 
         private dynamic GetJobList()
         {

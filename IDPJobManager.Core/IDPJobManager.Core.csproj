@@ -121,6 +121,7 @@
     <Compile Include="Utils\Ensure.cs" />
     <Compile Include="Utils\NativeWindowApiUtil.cs" />
     <Compile Include="ViewProjections\Job\AllJobsViewProjection.cs" />
+    <Compile Include="ViewProjections\Job\JobViewProjection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

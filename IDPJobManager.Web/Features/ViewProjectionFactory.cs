@@ -1,5 +1,4 @@
 ﻿using IDPJobManager.Core;
-using Nancy.TinyIoc;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 

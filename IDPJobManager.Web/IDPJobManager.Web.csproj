@@ -139,6 +139,7 @@
     <EmbeddedResource Include="Views\Shared\_Layout.cshtml" />
     <EmbeddedResource Include="Views\Account\Login.cshtml" />
     <EmbeddedResource Include="Views\Job\List.cshtml" />
+    <None Include="Views\Job\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IDPJobManager.Bootstrapper.Mef\IDPJobManager.Bootstrapper.Mef.csproj">
