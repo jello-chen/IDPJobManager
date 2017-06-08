@@ -77,7 +77,7 @@
                             <template v-for="(row, index) in Rows">
                                 <tr v-if="index>=(Page-1)*Take&&index<Page*Take">
                                     <td>{{row.JobName}}</td>
-                                    <td><label class="btn-circle"></label></td>
+                                    <td><span v-show="row.Status == 1" class="label label-success">Start</span><span v-show="row.Status == 0" class="label label-warning">Stop</span></td>
                                     <td>{{row.AssemblyName}}</td>
                                     <td>{{row.ClassName}}</td>
                                     <td>{{row.CronExpression}}</td>

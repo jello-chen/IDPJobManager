@@ -5,8 +5,10 @@ using Quartz.Impl;
 using Quartz.Impl.Triggers;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace IDPJobManager.Core.Extensions
 {
@@ -41,7 +43,8 @@ namespace IDPJobManager.Core.Extensions
                 jobTrigger.CronExpressionString = jobInfo.CronExpression;
                 jobTrigger.Name = jobIdentity;
                 jobTrigger.Description = jobInfo.JobName;
-                jobTrigger.StartTimeUtc = jobInfo.StartTime;
+                if (jobInfo.StartTime.HasValue)
+                    jobTrigger.StartTimeUtc = jobInfo.StartTime.Value;
                 jobTrigger.EndTimeUtc = jobInfo.EndTime;
                 scheduler.ScheduleJob(jobDetail, jobTrigger);
                 if (jobInfo.Status == 0) scheduler.PauseJob(jobKey);
@@ -54,11 +57,11 @@ namespace IDPJobManager.Core.Extensions
             return true;
         }
 
-        public static bool ScheduleJobs(this IScheduler scheduler, List<JobInfo> jobInfoList = null)
+        public static async Task<bool> ScheduleJobsAsync(this IScheduler scheduler, List<JobInfo> jobInfoList = null)
         {
             Ensure.Requires<ArgumentNullException>(scheduler != null, "sheduler should not be null.");
             if (jobInfoList == null)
-                jobInfoList = JobOperator.GetJobInfoList();
+                jobInfoList = await JobOperator.GetJobInfoListAsync();
             var result = false;
             foreach (var jobInfo in jobInfoList)
             {
@@ -79,11 +82,11 @@ namespace IDPJobManager.Core.Extensions
             return true;
         }
 
-        public static bool UnscheduleJobs(this IScheduler scheduler, List<JobInfo> jobInfoList = null, bool isUpdatingDB = false)
+        public static async Task<bool> UnscheduleJobsAsync(this IScheduler scheduler, List<JobInfo> jobInfoList = null, bool isUpdatingDB = false)
         {
             Ensure.Requires<ArgumentNullException>(scheduler != null, "sheduler should not be null.");
             if (jobInfoList == null)
-                jobInfoList = JobOperator.GetJobInfoList();
+                jobInfoList = await JobOperator.GetJobInfoListAsync();
             var result = false;
             foreach (var jobInfo in jobInfoList)
             {
@@ -119,11 +122,11 @@ namespace IDPJobManager.Core.Extensions
             return true;
         }
 
-        public static bool PauseJobs(this IScheduler scheduler, List<string> jobKeys = null,bool isUpdateDB = false)
+        public static async Task<bool> PauseJobsAsync(this IScheduler scheduler, List<string> jobKeys = null,bool isUpdateDB = false)
         {
             Ensure.Requires<ArgumentNullException>(scheduler != null, "sheduler should not be null.");
             if (jobKeys == null)
-                jobKeys = JobOperator.GetJobInfoList().Select(t => t.ID.ToString()).ToList();
+                jobKeys = (await JobOperator.GetJobInfoListAsync()).Select(t => t.ID.ToString()).ToList();
             var result = false;
             foreach (var jobkey in jobKeys)
             {
@@ -147,17 +150,17 @@ namespace IDPJobManager.Core.Extensions
 
     public class JobOperator
     {
-        public static List<JobInfo> GetJobInfoList()
+        public static async Task<List<JobInfo>> GetJobInfoListAsync()
         {
             using (var dataContext = new IDPJobManagerDataContext())
             {
-                return (from j in dataContext.Set<JobInfo>()
+                return await (from j in dataContext.T_Job
                         where j.IsDelete == 0
-                        select j).ToList();
+                        select j).ToListAsync();
             }
         }
 
-        public static bool UpdateJob(Guid id, int status)
+        public static async Task<bool> UpdateJobAsync(Guid id, int status)
         {
             using (var dataContext = new IDPJobManagerDataContext())
             {
@@ -166,13 +169,13 @@ namespace IDPJobManager.Core.Extensions
                 if (jobInfo != null)
                 {
                     jobInfo.Status = status;
-                    dataContext.SaveChanges();
+                    await dataContext.SaveChangesAsync();
                 }
                 return true;
             }
         }
 
-        public static bool DeleteJob(Guid id)
+        public static async Task<bool> DeleteJobAsync(Guid id)
         {
             using (var dataContext = new IDPJobManagerDataContext())
             {
@@ -181,7 +184,7 @@ namespace IDPJobManager.Core.Extensions
                 if (jobInfo != null)
                 {
                     jobInfo.IsDelete = 1;
-                    dataContext.SaveChanges();
+                    await dataContext.SaveChangesAsync();
                 }
                 return true;
             }

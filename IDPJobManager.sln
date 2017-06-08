@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDPJobManager", "IDPJobManager\IDPJobManager.csproj", "{15C68529-2C93-4437-832B-53F4B8037F98}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDPJobManager.Bootstrapper.Mef", "IDPJobManager.Bootstrapper.Mef\IDPJobManager.Bootstrapper.Mef.csproj", "{2075D506-BB28-42CD-A34E-5D2227F07CC7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDPJobManager.Jobs", "IDPJobManager.Jobs\IDPJobManager.Jobs.csproj", "{95EE2DF2-8478-4104-86AA-D4888F657A02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jobs", "Jobs", "{8775F633-4765-4DF6-A952-06C983685800}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

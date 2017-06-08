@@ -24,18 +24,11 @@ namespace IDPJobManager
 
                 var scheduler = CreateScheduler();
 
-                x.OnCloseConsole(ct =>
-                {
-                    if (ct == 2 && scheduler.IsStarted)
-                        return scheduler.PauseJobs(isUpdateDB: true);
-                    return false;
-                });
-
                 using (IDPJobManagerStarter.Configure.UsingScheduler(scheduler)
                         .HostedOnDefault()
                         .Start())
                 {
-                    scheduler.StartRunning().ScheduleJobs();
+                    scheduler.StartRunning().ScheduleJobsAsync().Wait();
                     Console.WriteLine($"Web host started on {IDPJobManagerStarter.Configure.BaseUri}.");
                     Console.Read();
                 }
@@ -62,6 +55,7 @@ namespace IDPJobManager
             var connectionString = ConfigurationManager.ConnectionStrings["IDP-JobManager"];
             if (connectionString == null)
                 throw new InvalidOperationException("Not configure `IDP-JobManager` connection string.");
+            Core.Config.GlobalConfiguration.Name = "IDP-JobManager";
             Core.Config.GlobalConfiguration.ConnectionString = connectionString.ConnectionString;
             Core.Config.GlobalConfiguration.ProviderName = connectionString.ProviderName;
         }
