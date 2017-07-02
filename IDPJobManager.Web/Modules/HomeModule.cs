@@ -5,10 +5,8 @@
     using Configuration;
     using System.Linq;
     using Core.Domain;
-    using System.ComponentModel.Composition;
     using Nancy;
 
-    [Export(typeof(INancyModule))]
     public class HomeModule : BaseModule
     {
         private static readonly ISchedulerDataProvider SchedulerDataProvider;

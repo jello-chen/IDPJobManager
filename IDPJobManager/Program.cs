@@ -5,6 +5,8 @@ using Quartz;
 using System.Configuration;
 using Topshelf;
 using IDPJobManager.Core.Extensions;
+using IDPJobManager.Core.SchedulerProviders;
+using Quartz.Impl.Matchers;
 
 namespace IDPJobManager
 {
@@ -28,26 +30,11 @@ namespace IDPJobManager
                         .HostedOnDefault()
                         .Start())
                 {
-                    scheduler.StartRunning().ScheduleJobsAsync().Wait();
                     Console.WriteLine($"Web host started on {IDPJobManagerStarter.Configure.BaseUri}.");
+                    scheduler.StartRunning().ScheduleJobsAsync().Wait();
                     Console.Read();
                 }
-  
             });
-            
-
-            //var jobTrigger = TriggerBuilder.Create().WithSimpleSchedule(x => x.WithIntervalInSeconds(10).WithRepeatCount(int.MaxValue)).Build();
-            //var jobKey = JobKey.Create("job1", "jobgroup1");
-            //IJobDetail jobDetail = scheduler.GetJobDetail(jobKey);
-            //if (jobDetail == null)
-            //{
-            //    jobDetail = JobBuilder.Create<HelloJob>().WithIdentity(jobKey).Build();
-            //    scheduler.ScheduleJob(jobDetail, jobTrigger);
-            //}
-            //else
-            //{
-            //    scheduler.ResumeJob(jobKey);
-            //}
         }
 
         static void ConfigureDBConnectionString()
@@ -63,7 +50,9 @@ namespace IDPJobManager
         static IScheduler CreateScheduler()
         {
             var schedulerFactory = new StdSchedulerFactory();
-            return schedulerFactory.GetScheduler();
+            var scheduler = schedulerFactory.GetScheduler();
+            scheduler.ListenerManager.AddTriggerListener(new DefaultTriggerListener(), GroupMatcher<TriggerKey>.AnyGroup());
+            return scheduler;
         }
     }
 }

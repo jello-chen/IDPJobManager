@@ -1,0 +1,60 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@{
+    Layout = "Shared/_Layout.cshtml";
+    ViewBag.Title = "Api Doc";
+}
+@section Style{
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./swagger-ui/swagger-ui.css">
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
+
+        #swagger-ui section > .topbar {
+            display: none !important;
+        }
+
+        #swagger-ui section > .wrapper {
+            display: none !important;
+        }
+    </style>
+}
+<div id="swagger-ui"></div>
+<script src="./swagger-ui/swagger-ui-bundle.js"></script>
+<script src="./swagger-ui/swagger-ui-standalone-preset.js"></script>
+<script>
+    window.onload = function () {
+        // Build a system
+        const ui = SwaggerUIBundle({
+            url: "@Model",
+            dom_id: '#swagger-ui',
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIStandalonePreset
+            ],
+            plugins: [
+                SwaggerUIBundle.plugins.DownloadUrl
+            ],
+            layout: "StandaloneLayout"
+        })
+
+        window.ui = ui
+    }
+</script>
+@section Scripts{
+
+}

@@ -1,33 +1,21 @@
 ﻿using IDPJobManager.Core;
 using Nancy.TinyIoc;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 
 namespace IDPJobManager.Web.Features
 {
-    [Export(typeof(ICommandInvokerFactory))]
     public class CommandInvokerFactory : ICommandInvokerFactory
     {
-        private readonly CompositionContainer _container;
+        private readonly TinyIoCContainer _container;
 
-        [ImportingConstructor]
-        public CommandInvokerFactory(CompositionContainer container)
+        public CommandInvokerFactory(TinyIoCContainer container)
         {
             _container = container;
         }
 
         public TOut Handle<TIn, TOut>(TIn input)
         {
-            try
-            {
-                var commandInvoker = _container.GetExportedValue<ICommandInvoker<TIn, TOut>>();
-                return commandInvoker.Execute(input);
-            }
-            catch (System.Exception e)
-            {
-
-                throw;
-            }
+            var commandInvoker = _container.Resolve<ICommandInvoker<TIn, TOut>>();
+            return commandInvoker.Execute(input);
         }
     }
 }

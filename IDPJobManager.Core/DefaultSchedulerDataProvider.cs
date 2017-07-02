@@ -4,7 +4,7 @@ namespace IDPJobManager.Core
     using System.Linq;
     using IDPJobManager.Core.Domain;
     using IDPJobManager.Core.SchedulerProviders;
-    using IDPJobManager.Core.Utils;
+    using IDPJobManager.Core.Extensions;
     using Quartz;
     using Quartz.Impl.Matchers;
 

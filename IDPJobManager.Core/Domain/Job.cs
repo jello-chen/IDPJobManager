@@ -46,5 +46,11 @@ namespace IDPJobManager.Core.Domain
 
         [Column(TypeName = "datetime2")]
         public DateTime? EndTime { get; set; }
+
+        [NotMapped]
+        public string StartTimeString { get { return StartTime?.ToString("yyyy-MM-dd HH:mm:ss"); } }
+
+        [NotMapped]
+        public string EndTimeString { get { return EndTime?.ToString("yyyy-MM-dd HH:mm:ss"); } }
     }
 }

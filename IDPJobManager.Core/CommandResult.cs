@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IDPJobManager.Core
 {
@@ -21,9 +18,9 @@ namespace IDPJobManager.Core
             }
         }
 
-        public CommandResult(string trrorMessage)
+        public CommandResult(string errorMessage)
         {
-            AddError(trrorMessage);
+            AddError(errorMessage);
         }
 
         public bool Success

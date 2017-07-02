@@ -3,8 +3,6 @@
     using System;
     using Nancy.Hosting.Self;
     using Quartz;
-    using System.ComponentModel.Composition.Hosting;
-    using System.ComponentModel.Composition;
 
     public class IDPJobManagerStarter
     {
@@ -12,18 +10,9 @@
 
         public static IDPJobManagerStarter Configure = new IDPJobManagerStarter();
         internal static IScheduler Scheduler { get; private set; }
-        private readonly AggregateCatalog catalog;
-        private readonly CompositionContainer container;
         private NancyHost nancyHost;
 
         public Uri BaseUri { get { return baseUri; } }
-
-        private IDPJobManagerStarter()
-        {
-            var catalog = new AggregateCatalog(new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "IDPJobManager*.dll"));
-            container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection | CompositionOptions.IsThreadSafe | CompositionOptions.ExportCompositionService);
-            container.ComposeExportedValue(container);
-        }
 
         public IDPJobManagerStarter UsingScheduler(IScheduler scheduler)
         {
@@ -55,7 +44,7 @@
             if (Scheduler == null)
                 throw new InvalidOperationException("Scheduler is not specified");
             nancyHost = new NancyHost(
-                new IDPJobManagerBootstrapper(container),
+                new IDPJobManagerBootstrapper(Scheduler),
                 new HostConfiguration
                 {
                     UrlReservations = new UrlReservations
@@ -65,7 +54,6 @@
                 },
                 baseUri);
             nancyHost.Start();
-            container.ComposeExportedValue(Scheduler);
             return nancyHost;
         }
 

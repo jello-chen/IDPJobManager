@@ -32,29 +32,36 @@ namespace IDPJobManager.Core.Extensions
         {
             Ensure.Requires<ArgumentNullException>(scheduler != null, "sheduler should not be null.");
 
-            var jobIdentity = jobInfo.ID.ToString();
-            var jobKey = new JobKey(jobIdentity);
-            if (!scheduler.CheckExists(jobKey))
+            try
             {
-                var assemblyScanner = new AssemblyScanner(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Jobs"));
-                var jobType = assemblyScanner.GetType(jobInfo.AssemblyName, jobInfo.ClassName);
-                var jobDetail = new JobDetailImpl(jobIdentity, jobType);
-                var jobTrigger = new CronTriggerImpl();
-                jobTrigger.CronExpressionString = jobInfo.CronExpression;
-                jobTrigger.Name = jobIdentity;
-                jobTrigger.Description = jobInfo.JobName;
-                if (jobInfo.StartTime.HasValue)
-                    jobTrigger.StartTimeUtc = jobInfo.StartTime.Value;
-                jobTrigger.EndTimeUtc = jobInfo.EndTime;
-                scheduler.ScheduleJob(jobDetail, jobTrigger);
-                if (jobInfo.Status == 0) scheduler.PauseJob(jobKey);
+                var jobIdentity = jobInfo.ID.ToString();
+                var jobKey = new JobKey(jobIdentity);
+                if (!scheduler.CheckExists(jobKey))
+                {
+                    var assemblyScanner = new AssemblyScanner(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Jobs"));
+                    var jobType = assemblyScanner.GetType(jobInfo.AssemblyName, jobInfo.ClassName);
+                    var jobDetail = new JobDetailImpl(jobIdentity, jobType);
+                    var jobTrigger = new CronTriggerImpl();
+                    jobTrigger.CronExpressionString = jobInfo.CronExpression;
+                    jobTrigger.Name = jobIdentity;
+                    jobTrigger.Description = jobInfo.JobName;
+                    if (jobInfo.StartTime.HasValue)
+                        jobTrigger.StartTimeUtc = jobInfo.StartTime.Value;
+                    jobTrigger.EndTimeUtc = jobInfo.EndTime;
+                    scheduler.ScheduleJob(jobDetail, jobTrigger);
+                    if (jobInfo.Status == 0) scheduler.PauseJob(jobKey);
+                }
+                else
+                {
+                    if (jobInfo.Status == 1) scheduler.ResumeJob(jobIdentity);
+                }
+                return true;
             }
-            else
+            catch (Exception ex)
             {
-                if (jobInfo.Status == 1) scheduler.ResumeJob(jobIdentity);
+                Logger.Instance.Error(ex.Message);
+                return false;
             }
-
-            return true;
         }
 
         public static async Task<bool> ScheduleJobsAsync(this IScheduler scheduler, List<JobInfo> jobInfoList = null)
@@ -122,7 +129,7 @@ namespace IDPJobManager.Core.Extensions
             return true;
         }
 
-        public static async Task<bool> PauseJobsAsync(this IScheduler scheduler, List<string> jobKeys = null,bool isUpdateDB = false)
+        public static async Task<bool> PauseJobsAsync(this IScheduler scheduler, List<string> jobKeys = null, bool isUpdateDB = false)
         {
             Ensure.Requires<ArgumentNullException>(scheduler != null, "sheduler should not be null.");
             if (jobKeys == null)
@@ -155,8 +162,8 @@ namespace IDPJobManager.Core.Extensions
             using (var dataContext = new IDPJobManagerDataContext())
             {
                 return await (from j in dataContext.T_Job
-                        where j.IsDelete == 0
-                        select j).ToListAsync();
+                              where j.IsDelete == 0
+                              select j).ToListAsync();
             }
         }
 
@@ -184,6 +191,36 @@ namespace IDPJobManager.Core.Extensions
                 if (jobInfo != null)
                 {
                     jobInfo.IsDelete = 1;
+                    await dataContext.SaveChangesAsync();
+                }
+                return true;
+            }
+        }
+
+        public static async Task<bool> UpdateRecentRunTimeAsync(Guid id, DateTime recentRunTime)
+        {
+            using (var dataContext = new IDPJobManagerDataContext())
+            {
+                var jobInfoList = dataContext.Set<JobInfo>();
+                var jobInfo = jobInfoList.FirstOrDefault(j => j.ID == id);
+                if (jobInfo != null)
+                {
+                    jobInfo.RecentRunTime = recentRunTime;
+                    await dataContext.SaveChangesAsync();
+                }
+                return true;
+            }
+        }
+
+        public static async Task<bool> UpdateNextFireTimeAsync(Guid id, DateTime nextFireTime)
+        {
+            using (var dataContext = new IDPJobManagerDataContext())
+            {
+                var jobInfoList = dataContext.Set<JobInfo>();
+                var jobInfo = jobInfoList.FirstOrDefault(j => j.ID == id);
+                if (jobInfo != null)
+                {
+                    jobInfo.NextFireTime = nextFireTime;
                     await dataContext.SaveChangesAsync();
                 }
                 return true;

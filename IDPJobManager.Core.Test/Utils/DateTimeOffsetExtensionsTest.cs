@@ -1,6 +1,6 @@
 ﻿using System;
 using Xunit;
-using IDPJobManager.Core.Utils;
+using IDPJobManager.Core.Extensions;
 
 namespace IDPJobManager.Core.Test.Utils
 {

@@ -1,73 +1,103 @@
 ﻿using IDPJobManager.Core.Domain;
+using IDPJobManager.Core.Grid;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
+using IDPJobManager.Core.Extensions;
 
 namespace IDPJobManager.Core.ViewProjections.Job
 {
-    [Export(typeof(IViewProjection<AllJobsBindingModel, AllJobsViewModel>))]
     public class AllJobsViewProjection : IViewProjection<AllJobsBindingModel, AllJobsViewModel>
     {
-        private readonly IDPJobManagerDataContext dataContext;
-
-        [ImportingConstructor]
-        public AllJobsViewProjection(IDPJobManagerDataContext dataContext)
-        {
-            this.dataContext = dataContext;
-        }
 
         public AllJobsViewModel Project(AllJobsBindingModel input)
         {
-            var skip = (input.Page - 1) * input.Take;
 
-            var query = from j in dataContext.Set<JobInfo>()
-                        where j.IsDelete == 0
-                        //orderby j.CreatedTime descending, j.ModifyTime descending
-                        select j;
-
-            if (!string.IsNullOrEmpty(input.JobName))
-                query = query.Where(j => j.JobName.Contains(input.JobName));
-
-            if (input.StartDate != DateTime.MinValue)
-                query = query.Where(j => j.CreatedTime >= input.StartDate);
-
-            if (input.EndDate != DateTime.MinValue)
-                query = query.Where(j => j.CreatedTime <= input.EndDate);
-
-            var jobs =  query
-                        .OrderByDescending(j => j.CreatedTime)
-                        .ThenByDescending(j => j.ModifyTime)
-                        .Skip(skip)
-                        .Take(input.Take + 1)
-                        .ToList();
-
-            var pagedJobs = jobs.Take(input.Take);
-            var hasNextPage = jobs.Count > input.Take;
-
-            return new AllJobsViewModel
+            using (var dataContext = new IDPJobManagerDataContext())
             {
-                Jobs = pagedJobs,
-                Page = input.Page,
-                HasNextPage = hasNextPage
-            };
+                var query = from j in dataContext.Set<JobInfo>()
+                            where j.IsDelete == 0
+                            select j;
+
+                if (!string.IsNullOrEmpty(input.JobName))
+                    query = query.Where(j => j.JobName.Contains(input.JobName));
+
+                if (input.StartDate != DateTime.MinValue)
+                    query = query.Where(j => j.CreatedTime >= input.StartDate);
+
+                if (input.EndDate != DateTime.MinValue)
+                    query = query.Where(j => j.CreatedTime <= input.EndDate);
+
+                var totalCount = query.Count();
+
+                if (!string.IsNullOrEmpty(input.SortKey) && !string.IsNullOrEmpty(input.SortType))
+                {
+                    query = query.OrderBy(input.SortKey, input.SortType);
+                }
+                else
+                {
+                    query = query.OrderByDescending(j => j.CreatedTime).ThenByDescending(j => j.ModifyTime);
+                }
+
+                var jobs = query
+                            .Skip((input.PageCurrent - 1) * input.PageSize)
+                            .Take(input.PageSize)
+                            .ToList();
+
+                return new AllJobsViewModel
+                {
+                    Items = jobs,
+                    TotalCount = totalCount
+                }; 
+            }
         }
     }
 
     public class AllJobsViewModel
     {
-        public IEnumerable<JobInfo> Jobs { get; set; }
-        public int Page { get; set; }
-        public bool HasNextPage { get; set; }
-        public bool HasPrevPage => Page > 1;
+        public IEnumerable<JobInfo> Items { get; set; }
+        public int TotalCount { get; set; }
     }
 
-    public class AllJobsBindingModel
+    public class AllJobsBindingModel : IPager, ISortor
     {
         public string JobName { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public int Page { get; set; } = 1;
-        public int Take { get; set; } = 10;
+
+        #region IPager implements
+        private int pageCurrent;
+        public int PageCurrent
+        {
+            get { return pageCurrent; }
+            set { pageCurrent = value; }
+        }
+
+        private int pageSize;
+
+        public int PageSize
+        {
+            get { return pageSize; }
+            set { pageSize = value; }
+        }
+        #endregion
+
+        #region ISortor implements
+        private string sortKey;
+
+        public string SortKey
+        {
+            get { return sortKey; }
+            set { sortKey = value; }
+        }
+
+        private string sortType;
+
+        public string SortType
+        {
+            get { return sortType; }
+            set { sortType = value; }
+        } 
+        #endregion
     }
 }

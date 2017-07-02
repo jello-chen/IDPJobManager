@@ -17,7 +17,7 @@ namespace IDPJobManager.Core.SchedulerProviders
         {
             get
             {
-                return _scheduler;
+                return _scheduler; 
             }
         }
     }

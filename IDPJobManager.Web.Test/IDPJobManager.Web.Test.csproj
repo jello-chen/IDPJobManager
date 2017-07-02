@@ -76,12 +76,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IDPJobManager.Bootstrapper.Mef\IDPJobManager.Bootstrapper.Mef.csproj">
-      <Project>{2075d506-bb28-42cd-a34e-5d2227f07cc7}</Project>
-      <Name>IDPJobManager.Bootstrapper.Mef</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

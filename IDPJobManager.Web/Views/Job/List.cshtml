@@ -4,8 +4,18 @@
     ViewBag.Title = "Job List";
 }
 @section Style{
-    @*<link href="/Content/Styles/jqgrid/ui.jqgrid.css" rel="stylesheet"/>*@
-    <link href="/Content/Styles/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen" />
+    <link href="~/Content/Styles/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen" />
+    <link href="~/Content/Styles/vue-bootstrap-modal.css" rel="stylesheet" />
+    <style type="text/css">
+        .required-tip {
+            color: red;
+            margin-left: 0.25rem;
+        }
+
+        .tip {
+            color: #d9534f;
+        }
+    </style>
 }
 
 <div class="row">
@@ -46,7 +56,9 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="app-toolbar">
-            <button class="btn btn-white btn-sm" id="btn_Add"><span class="fa fa-plus"></span>Add</button>
+            <button class="btn btn-default btn-sm" id="btn_Add" v-on:click="AddJob">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
+            </button>
         </div>
     </div>
 </div>
@@ -54,319 +66,120 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
-            <div class="panel-heading">
-                Job List
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped text-center table-hover">
-                        <thead>
-                            <tr>
-                                <th>Job Name</th>
-                                <th>Status</th>
-                                <th>Assembly Name</th>
-                                <th>Class Name</th>
-                                <th>Cron Expression</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Operation</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <template v-for="(row, index) in Rows">
-                                <tr v-if="index>=(Page-1)*Take&&index<Page*Take">
-                                    <td>{{row.JobName}}</td>
-                                    <td><span v-show="row.Status == 1" class="label label-success">Start</span><span v-show="row.Status == 0" class="label label-warning">Stop</span></td>
-                                    <td>{{row.AssemblyName}}</td>
-                                    <td>{{row.ClassName}}</td>
-                                    <td>{{row.CronExpression}}</td>
-                                    <td>{{row.StartTime}}</td>
-                                    <td>{{row.EndTime}}</td>
-                                    <td>
-                                        <a v-show="row.Status == 0" href="javascript:void(0)" v-on:click="startJob(row.ID,index,$event)" title="Start"><i class="glyphicon glyphicon-play"></i></a>
-                                        @*<a :href="'/Job/Pause/' + row.ID" title="Pause"><i class="glyphicon glyphicon-pause"></i></a>*@
-                                        <a v-show="row.Status == 1" href="javascript:void(0)" v-on:click="stopJob(row.ID,index,$event)" title="Stop"><i class="glyphicon glyphicon-stop"></i></a>
-                                        <a href="javascript:void(0)" title="Edit" v-on:click="editJob(row.ID,$event)"><i class="glyphicon glyphicon-pencil"></i></a>
-                                        <a href="javascript:void(0)" title="Delete" v-on:click="deleteJob(row.ID,$event)"><i class="glyphicon glyphicon-remove"></i></a>
-                                    </td>
-                                </tr>
-                            </template>
-                            <template v-if="Rows.length == 0">
-                                <tr>
-                                    <td colspan="8">No data</td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </div>
-                <nav style="float:right;">
-                    <ul class="pagination pagination-lg">
-                        <template v-for="pageIndex in Math.ceil(Rows.length/Take)">
-                            <li v-on:click="PrePage()" id="prepage" v-if="pageIndex==1" class="disabled"><a href="#">上一页</a></li>
-                            <li v-if="pageIndex==1" class="active" v-on:click="NumPage(pageIndex, $event)"><a href="#">{{pageIndex}}</a></li>
-                            <li v-else v-on:click="NumPage(pageIndex, $event)"><a href="#">{{pageIndex}}</a></li>
-                            <li id="nextpage" v-on:click="NextPage()" v-if="pageIndex==Math.ceil(Rows.length/Take)"><a href="#">下一页</a></li>
-                        </template>
-                    </ul>
-                </nav>
-            </div>
-            <!-- /.panel-body -->
+            <div class="panel-heading">Job List</div>
+            <table class="table table-bordered table-responsive table-striped">
+                <thead>
+                    <tr>
+                        <th v-for="colHeader in colHeaders" v-on:click="sortBy(colHeader)" class="text-center" :class="{ active: sortKey == colHeader.name }">{{colHeader.label}}<span v-if="changeSortable(colHeader.sortable)" class="arrow" :class="sortOrders[colHeader.name] > 0 ? 'asc' : 'desc'"></span></th>
+                        <th class="text-center">Operation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item,index) in items">
+                        <td>{{item.JobName}}</td>
+                        <td><span v-show="item.Status == 1" class="label label-success">Start</span><span v-show="item.Status == 0" class="label label-warning">Stop</span></td>
+                        <td>{{item.AssemblyName}}</td>
+                        <td>{{item.ClassName}}</td>
+                        <td>{{item.CronExpression}}</td>
+                        <td>{{item.StartTimeString}}</td>
+                        <td>{{item.EndTimeString}}</td>
+                        <td>
+                            <a v-show="item.Status == 0" href="javascript:void(0)" v-on:click="startJob(item.ID,index,$event)" title="Start"><i class="glyphicon glyphicon-play"></i></a>
+                            <a v-show="item.Status == 1" href="javascript:void(0)" v-on:click="stopJob(item.ID,index,$event)" title="Stop"><i class="glyphicon glyphicon-stop"></i></a>
+                            <a href="javascript:void(0)" title="Edit" v-on:click="editJob(item.ID,$event)"><i class="glyphicon glyphicon-pencil"></i></a>
+                            <a href="javascript:void(0)" title="Delete" v-on:click="deleteJob(item.ID,$event)"><i class="glyphicon glyphicon-remove"></i></a>
+                        </td>
+                    </tr>
+                    <tr v-if="items.length == 0">
+                        <td :colspan="colHeaders.length + 1" class="text-center">No Data</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+        <vb-pager v-on:page-changed="pageChanged" v-on:page-size-changed="pageSizeChanged" :page-current="pageCurrent" :page-size="pageSize" :page-size-list="pageSizeList" :total-count="totalCount"></vb-pager>
         <!-- /.panel -->
     </div>
     <!-- /.col-lg-12 -->
 </div>
-<!-- /Edit -->
-<div id="divEdit">
-    <div class="form-horizontal">
-        <div class="form-group">
-
-            <label class="control-label col-sm-4">Job Name</label>
-            <div class="col-sm-6">
-
-                <input class="form-control" type="text" v-model="EditModel.JobName" />
+<!--custom content-->
+<vb-modal v-show="showModal" v-on:close="showModal = false" style="display:none;">
+    <h3 slot="header">{{Model.ID != '' ? 'Edit' : 'Add'}}</h3>
+    <div id="divEdit" slot="body">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-sm-4">Job Name<span class="required-tip">*</span></label>
+                <div class="col-sm-6">
+                    <input class="form-control" type="text" v-model="Model.JobName" v-on:blur="beRequired('JobName')" />
+                </div>
+                <span class="tip">{{validation.JobName}}</span>
             </div>
-        </div>
-        <div class="form-group">
-
-            <label class="control-label col-sm-4">Assembly Name</label>
-            <div class="col-sm-6">
-
-                <input class="form-control" type="text" v-model="EditModel.AssemblyName" />
+            <div class="form-group">
+                <label class="control-label col-sm-4">Assembly Name<span class="required-tip">*</span></label>
+                <div class="col-sm-6">
+                    <input class="form-control" type="text" v-model="Model.AssemblyName" v-on:blur="beRequired('AssemblyName')" />
+                </div>
+                <span class="tip">{{validation.AssemblyName}}</span>
             </div>
-        </div>
-        <div class="form-group">
-
-            <label class="control-label col-sm-4">Class Name</label>
-            <div class="col-sm-6">
-
-                <input class="form-control" type="text" v-model="EditModel.ClassName" />
+            <div class="form-group">
+                <label class="control-label col-sm-4">Class Name<span class="required-tip">*</span></label>
+                <div class="col-sm-6">
+                    <input class="form-control" type="text" v-model="Model.ClassName" v-on:blur="beRequired('ClassName')" />
+                </div>
+                <span class="tip">{{validation.ClassName}}</span>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-4">Cron Expression</label>
-            <div class="col-sm-6">
-                <input class="form-control" type="text" v-model="EditModel.CronExpression" />
+            <div class="form-group">
+                <label class="control-label col-sm-4">Cron Expression<span class="required-tip">*</span></label>
+                <div class="col-sm-6">
+                    <input class="form-control" type="text" v-model="Model.CronExpression" v-on:blur="beRequired('CronExpression')" />
+                </div>
+                <span class="tip">{{validation.CronExpression}}</span>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-4">Start Time</label>
-            <div class="col-sm-6">
-                <div class=input-group date form_dateperiod>
-                    <input type=text class="form-control" v-model="EditModel.StartTime" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
+            <div class="form-group">
+                <label class="control-label col-sm-4">Start Time</label>
+                <div class="col-sm-6">
+                    <div class="input-group date form_dateperiod" id="dtModelStartTime">
+                        <input type=text class="form-control" v-model="Model.StartTimeString" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-4">End Time</label>
-            <div class="col-sm-6">
-                <div class=input-group date form_dateperiod>
-                    <input type=text class="form-control" v-model="EditModel.EndTime" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
+            <div class="form-group">
+                <label class="control-label col-sm-4">End Time</label>
+                <div class="col-sm-6">
+                    <div class="input-group date form_dateperiod" id="dtModelEndTime">
+                        <input type=text class="form-control" v-model="Model.EndTimeString" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-4">Status</label>
-            <div class="col-sm-6">
-                <label class="radio-inline">
-                    <input type="radio" value="0"> Stop
-                </label>
-                <label class="radio-inline">
-                    <input type="radio" value="1"> Start
-                </label>
-            </div>
+            @*<div class="form-group">
+                    <label class="control-label col-sm-4">Status</label>
+                    <div class="col-sm-6">
+                        <label class="radio-inline">
+                            <input type="radio" value="0" name="statusType" v-model="Model.Status"> Stop
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" value="1" name="statusType" v-model="Model.Status"> Start
+                        </label>
+                    </div>
+                </div>*@
         </div>
     </div>
-</div>
+    <span slot="footer">
+        <button type="button" class="btn btn-default" v-on:click="showModal = false">Cancel</button>
+        <button type="button" class="btn btn-primary" :class="{'disabled' : Model.ID == '' && !valid}" v-on:click="SaveJob($event)">Save</button>
+    </span>
+</vb-modal>
+<!-- /Edit -->
 
 @section Scripts{
-    <script src="/Content/Scripts/moment-with-locales.js"></script>
-    <script src="/Content/Scripts/bootstrap-datetimepicker.min.js"></script>
-    <script type="text/javascript">
-
-        function initDateTimePicker() {
-            $('#dtStart').datetimepicker({
-                format: 'YYYY-MM-DD'
-            });
-            $('#dtEnd').datetimepicker({
-                format: 'YYYY-MM-DD',
-                useCurrent: false //Important! See issue #1075
-            });
-            $("#dtStart").on("dp.change", function (e) {
-                $('#dtEnd').data("DateTimePicker").minDate(e.date);
-            });
-            $("#dtEnd").on("dp.change", function (e) {
-                $('#dtStart').data("DateTimePicker").maxDate(e.date);
-            });
-        }
-
-        function initEditDateTimePicker() {
-
-        }
-
-        //Model
-        var d = {
-            Rows: [],
-            Page: 1,//当前页的页码
-            Take: 10,
-            JobName: '',
-            StartDate: '',
-            EndDate: '',
-            EditModel: {
-                ID: '',
-                JobName: '',
-                AssemblyName: '',
-                ClassName: '',
-                CronExpression: '',
-                StartTime: '',
-                EndTime: ''
-            }
-        };
-
-        var vm = new Vue({
-            el: "#container",
-            mounted: function () {
-                initDateTimePicker();
-            },
-            data: d,
-            methods: {
-                searchJobs: function (event) {
-                    var that = this;
-                    $.ajax({
-                        url: '/Job/GetJobList/',
-                        data: d,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function (result) {
-                            if (result) {
-                                that.Rows = result.Jobs;
-                            }
-                        }
-                    });
-                    if (event) event.preventDefault();
-                },
-                startJob: function (id, i, event) {
-                    var that = this;
-                    $.ajax({
-                        url: '/Job/Start/',
-                        data: { "ID": id },
-                        type: 'POST',
-                        dataType: 'json',
-                        success: function (result) {
-                            if (result && result.success) {
-                                that.Rows[i].Status = 1;
-                            }
-                        }
-                    });
-                    event.preventDefault();
-                },
-                stopJob: function (id, i, event) {
-                    var that = this;
-                    $.ajax({
-                        url: '/Job/Stop/',
-                        data: { "ID": id },
-                        type: 'POST',
-                        dataType: 'json',
-                        success: function (result) {
-                            if (result && result.success) {
-                                that.Rows[i].Status = 0;
-                            }
-                        }
-                    });
-                    event.preventDefault();
-                },
-                deleteJob: function (id, event) {
-                    var that = this;
-                    BootstrapDialog.confirm('Are you sure to delete this job?', function (result) {
-                        if (result) {
-                            $.post('/Job/Delete/', { "ID": id }, function (data) {
-                                if (data) {
-                                    if (data.success === true) {
-                                        that.searchJobs();
-                                    }
-                                    else {
-                                        BootstrapDialog.show({
-                                            title: 'Delete Job Error',
-                                            message: data.message.toString()
-                                        });
-                                    }
-                                }
-
-                            });
-                        }
-                    });
-                },
-                editJob: function (id, event) {
-                    var that = this;
-                    $.get('/Job/Get/', { "ID": id }, function (data) {
-                        if (data && data.success === true) {
-                            that.EditModel = data.model;
-                            BootstrapDialog.show({
-                                title: 'Edit Job',
-                                message: $('<div></div>').html($('#divEdit').html()),
-                                draggable: true,
-                                buttons: [{
-                                    label: 'Cancel',
-                                    action: function (dialog) {
-                                        dialog.close();
-                                    }
-                                }, {
-                                    label: 'OK',
-                                    cssClass: 'btn-primary active',
-                                    hotkey: 13,
-                                    action: function (dialog) {
-                                        dialog.setTitle('Title 2');
-                                    }
-                                }]
-                            });
-                        }
-                    });
-                    event.preventDefault();
-                },
-                //上一页方法
-                PrePage: function (event) {
-                    $(".pagination .active").prev().trigger("click");
-                },
-                //下一页方法
-                NextPage: function (event) {
-                    $(".pagination .active").next().trigger("click");
-                },
-                //点击页码的方法
-                NumPage: function (num, event) {
-                    if (this.Page == num) {
-                        return;
-                    }
-                    this.Page = num;
-                    $(".pagination li").removeClass("active");
-                    if (event.target.tagName.toUpperCase() == "LI") {
-                        $(event.target).addClass("active");
-                    }
-                    else {
-                        $(event.target).parent().addClass("active");
-                    }
-                    if (this.Page == 1) {
-                        $("#prepage").addClass("disabled");
-                    }
-                    else {
-                        $("#prepage").removeClass("disabled");
-                    }
-                    if (this.Page == Math.ceil(this.Rows.length / this.Take)) {
-                        $("#nextpage").addClass("disabled");
-                    }
-                    else {
-                        $("#nextpage").removeClass("disabled");
-                    }
-                }
-            }
-        });
-        vm.searchJobs();
-
-    </script>
+    <script src="~/Content/Scripts/moment-with-locales.js"></script>
+    <script src="~/Content/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Content/Scripts/vue-bootstrap-pager.js"></script>
+    <script src="~/Content/Scripts/vue-bootstrap-modal.js"></script>
+    <script src="~/Content/Scripts/Job/List.js"></script>
 }

@@ -2,9 +2,7 @@
 {
     using Nancy.Authentication.Basic;
     using Nancy.Security;
-    using System.ComponentModel.Composition;
 
-    [Export(typeof(IUserValidator))]
     public class IDPJobManagerUserValidator : IUserValidator
     {
         public IUserIdentity Validate(string username, string password)

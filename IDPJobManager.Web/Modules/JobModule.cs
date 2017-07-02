@@ -4,16 +4,16 @@
     using Core.Commands.Job;
     using Core.ViewProjections.Job;
     using Nancy;
+    using Nancy.Metadata.Modules;
     using Nancy.ModelBinding;
-    using System.ComponentModel.Composition;
+    using Nancy.Swagger;
+    using Swagger.ObjectModel;
 
-    [Export(typeof(INancyModule))]
     public class JobModule : BaseModule
     {
         private readonly IViewProjectionFactory viewProjectionFactory;
         private readonly ICommandInvokerFactory commandInvokerFactory;
 
-        [ImportingConstructor]
         public JobModule(IViewProjectionFactory viewProjectionFactory,
             ICommandInvokerFactory commandInvokerFactory) : base("/Job")
         {
@@ -23,6 +23,8 @@
             Get["/"] = _ => View["List"];
             Get["/GetJobList"] = _ => GetJobList();
             Get["/Get"] = _ => GetJob();
+            Post["/Add"] = _ => AddJob(this.Bind<AddJobCommand>());
+            Post["/Edit"] = _ => EditJob(this.Bind<EditJobCommand>());
             Post["/Delete"] = _ => DeleteJob(this.Bind<DeleteJobCommand>());
             Post["/Start"] = _ => StartJob(this.Bind<StartJobCommand>());
             Post["/Stop"] = _ => StopJob(this.Bind<StopJobCommand>());
@@ -48,6 +50,18 @@
             return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
         }
 
+        private dynamic AddJob(AddJobCommand command)
+        {
+            var commandResult = commandInvokerFactory.Handle<AddJobCommand, CommandResult>(command);
+            return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
+        }
+
+        private dynamic EditJob(EditJobCommand command)
+        {
+            var commandResult = commandInvokerFactory.Handle<EditJobCommand, CommandResult>(command);
+            return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
+        }
+
         private dynamic StartJob(StartJobCommand command)
         {
             var commandResult = commandInvokerFactory.Handle<StartJobCommand, CommandResult>(command);
@@ -60,4 +74,19 @@
             return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
         }
     }
+
+    //public class JobMetadataModule: MetadataModule<PathItem>
+    //{
+    //    public JobMetadataModule(ISwaggerModelCatalog modelCatalog)
+    //    {
+    //        modelCatalog.AddModel<StartJobCommand>();
+    //        Describe["StartJob"] = description => description.AsSwagger(
+    //            with => with.Operation(
+    //                op => op.OperationId("StartJob")
+    //                        .Tag("Jobs")
+    //                        .Summary("Starts a job")
+    //                        .Description("This starts a specified job and returns the operation status")
+    //                        .Response(r => r.Schema<dynamic>().Description("OK"))));
+    //    }
+    //}
 }

@@ -1,26 +1,19 @@
 ﻿using IDPJobManager.Core.Domain;
 using System;
-using System.ComponentModel.Composition;
 using System.Linq;
 
 namespace IDPJobManager.Core.ViewProjections.Job
 {
-    [Export(typeof(IViewProjection<JobBindingModel, JobViewModel>))]
     public class JobViewProjection : IViewProjection<JobBindingModel, JobViewModel>
     {
 
-        private readonly IDPJobManagerDataContext dataContext;
-
-        [ImportingConstructor]
-        public JobViewProjection(IDPJobManagerDataContext dataContext)
-        {
-            this.dataContext = dataContext;
-        }
-
         public JobViewModel Project(JobBindingModel input)
         {
-            var model = dataContext.Set<JobInfo>().FirstOrDefault(t => t.ID == input.ID);
-            return new JobViewModel { Success = true, Model = model };
+            using (var dataContext = new IDPJobManagerDataContext())
+            {
+                var model = dataContext.Set<JobInfo>().FirstOrDefault(t => t.ID == input.ID);
+                return new JobViewModel { Success = true, Model = model }; 
+            }
         }
     }
 

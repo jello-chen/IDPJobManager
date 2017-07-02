@@ -1,11 +1,9 @@
 ﻿using IDPJobManager.Core.Config;
 using IDPJobManager.Core.Domain;
-using System.ComponentModel.Composition;
 using System.Data.Entity;
 
 namespace IDPJobManager.Core
 {
-    [Export]
     public partial class IDPJobManagerDataContext : DbContext
     {
         public IDPJobManagerDataContext() 
