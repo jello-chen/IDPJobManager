@@ -19,7 +19,9 @@ var d = {
     pageSize: 10,
     pageSizeList: [10, 20, 50],
     totalCount: 0,
-    showModal: false,
+    showAddOrEditModel: false,
+    showConfigModel: false,
+    dependableJobs: [],
     Model: {
         ID: '',
         JobName: '',
@@ -193,7 +195,7 @@ var vm = new Vue({
             });
         },
         AddJob: function () {
-            this.showModal = true;
+            this.showAddOrEditModel = true;
         },
         SaveJob: function (event) {
             if (this.valid) {
@@ -204,7 +206,7 @@ var vm = new Vue({
                         if (data && data.success) {
                             that.searchJobs();
                         }
-                        that.showModal = false;
+                        that.showAddOrEditModel = false;
                     });
                     if (event) event.preventDefault();
                 });
@@ -239,7 +241,7 @@ var vm = new Vue({
                 $.get('/Job/Get/', { "ID": id }, function (data) {
                     if (data && data.success === true) {
                         that.Model = data.model;
-                        that.showModal = true;
+                        that.showAddOrEditModel = true;
                     }
                 });
                 event.preventDefault();
@@ -281,7 +283,7 @@ var vm = new Vue({
             },
             deep: true
         },
-        showModal: function (val, oldVal) {
+        showAddOrEditModel: function (val, oldVal) {
             if (val === false) {
                 this.resetAddOrEdit();
             }

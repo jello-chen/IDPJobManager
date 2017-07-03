@@ -94,6 +94,7 @@
     <Compile Include="Domain\Job.cs" />
     <Compile Include="Domain\JobCommand.cs" />
     <Compile Include="Domain\JobData.cs" />
+    <Compile Include="Domain\JobDependency.cs" />
     <Compile Include="Domain\JobDetailsData.cs" />
     <Compile Include="Domain\JobGroupData.cs" />
     <Compile Include="Domain\NamedObject.cs" />
