@@ -23,11 +23,13 @@
             Get["/"] = _ => View["List"];
             Get["/GetJobList"] = _ => GetJobList();
             Get["/Get"] = _ => GetJob();
+            Get["/GetJobDependency"] = _ => GetJobDependency();
             Post["/Add"] = _ => AddJob(this.Bind<AddJobCommand>());
             Post["/Edit"] = _ => EditJob(this.Bind<EditJobCommand>());
             Post["/Delete"] = _ => DeleteJob(this.Bind<DeleteJobCommand>());
             Post["/Start"] = _ => StartJob(this.Bind<StartJobCommand>());
             Post["/Stop"] = _ => StopJob(this.Bind<StopJobCommand>());
+            Post["/SaveJobDependency"] = _ => SaveJobDependency(this.Bind<EditJobDependencyCommand>());
         }
 
         private dynamic GetJob()
@@ -73,20 +75,18 @@
             var commandResult = commandInvokerFactory.Handle<StopJobCommand, CommandResult>(command);
             return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
         }
-    }
 
-    //public class JobMetadataModule: MetadataModule<PathItem>
-    //{
-    //    public JobMetadataModule(ISwaggerModelCatalog modelCatalog)
-    //    {
-    //        modelCatalog.AddModel<StartJobCommand>();
-    //        Describe["StartJob"] = description => description.AsSwagger(
-    //            with => with.Operation(
-    //                op => op.OperationId("StartJob")
-    //                        .Tag("Jobs")
-    //                        .Summary("Starts a job")
-    //                        .Description("This starts a specified job and returns the operation status")
-    //                        .Response(r => r.Schema<dynamic>().Description("OK"))));
-    //    }
-    //}
+        private dynamic GetJobDependency()
+        {
+            var model = this.Bind<JobDependencyBindingModel>();
+            var vm = viewProjectionFactory.Get<JobDependencyBindingModel, JobDependencyViewModel>(model);
+            return Response.AsJson(vm);
+        }
+
+        private dynamic SaveJobDependency(EditJobDependencyCommand command)
+        {
+            var commandResult = commandInvokerFactory.Handle<EditJobDependencyCommand, CommandResult>(command);
+            return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
+        }
+    }
 }

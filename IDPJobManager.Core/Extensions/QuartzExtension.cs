@@ -34,7 +34,22 @@ namespace IDPJobManager.Core.Extensions
 
             try
             {
-                var jobIdentity = jobInfo.ID.ToString();
+                var jobId = jobInfo.ID;
+
+                //Gets the dependent job list and schedule them.
+                var dependentJobs = JobOperator.GetDependentJobInfoList(jobId);
+                if (dependentJobs.Count > 0)
+                {
+                    foreach (var job in dependentJobs)
+                    {
+                        job.StartTime = null;
+                        job.EndTime = null;
+                        job.Status = jobInfo.Status;
+                        ScheduleJob(scheduler, job);
+                    }
+                }
+
+                var jobIdentity = jobId.ToString();
                 var jobKey = new JobKey(jobIdentity);
                 if (!scheduler.CheckExists(jobKey))
                 {
@@ -224,6 +239,20 @@ namespace IDPJobManager.Core.Extensions
                     await dataContext.SaveChangesAsync();
                 }
                 return true;
+            }
+        }
+
+        public static List<JobInfo> GetDependentJobInfoList(Guid id)
+        {
+            using (var dataContext = new IDPJobManagerDataContext())
+            {
+                var query = from p in dataContext.T_JobDependency
+                            join q in dataContext.T_Job
+                            on p.DependentJobID equals q.ID into g
+                            from j in g.DefaultIfEmpty()
+                            where p.JobID == id
+                            select j;
+                return query.ToList();
             }
         }
     }

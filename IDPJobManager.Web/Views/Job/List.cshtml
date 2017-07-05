@@ -86,7 +86,7 @@
                         <td>
                             <a v-show="item.Status == 0" href="javascript:void(0)" v-on:click="startJob(item.ID,index,$event)" title="Start"><i class="glyphicon glyphicon-play"></i></a>
                             <a v-show="item.Status == 1" href="javascript:void(0)" v-on:click="stopJob(item.ID,index,$event)" title="Stop"><i class="glyphicon glyphicon-stop"></i></a>
-                            <a href="javascript:void(0)" title="Dependency Configuration" v-on:click="showConfigModel = true"><i class="glyphicon glyphicon-cog"></i></a>
+                            <a href="javascript:void(0)" title="Dependency Configuration" v-on:click="configurateDependency(item.ID,$event)"><i class="glyphicon glyphicon-cog"></i></a>
                             <a href="javascript:void(0)" title="Edit" v-on:click="editJob(item.ID,$event)"><i class="glyphicon glyphicon-pencil"></i></a>
                             <a href="javascript:void(0)" title="Delete" v-on:click="deleteJob(item.ID,$event)"><i class="glyphicon glyphicon-remove"></i></a>
                         </td>
@@ -181,30 +181,28 @@
     <div slot="body">
         <div class="row">
             <div class="col-xs-5">
-                <select name="from" id="multiselect" class="form-control" size="8" multiple="multiple">
-                    <option value="1">Item 1</option>
-                    <option value="2">Item 5</option>
-                    <option value="2">Item 2</option>
-                    <option value="2">Item 4</option>
-                    <option value="3">Item 3</option>
+                <select name="from" id="multiselect" v-model="selectedDependableJobList" class="form-control" size="10" multiple="multiple">
+                    <option v-for="(dj,index) in dependableJobList" v-bind:value="dj.ID" v-on:dblclick="addJobDependency(index)">{{dj.JobName}}</option>
                 </select>
             </div>
 
             <div class="col-xs-2">
-                <button type="button" id="multiselect_rightAll" class="btn btn-block"><i class="glyphicon glyphicon-forward"></i></button>
-                <button type="button" id="multiselect_rightSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
-                <button type="button" id="multiselect_leftSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
-                <button type="button" id="multiselect_leftAll" class="btn btn-block"><i class="glyphicon glyphicon-backward"></i></button>
+                <button type="button" id="multiselect_rightAll" class="btn btn-block" v-on:click="addMultiJobDependency(dependableJobList, true)"><i class="glyphicon glyphicon-forward"></i></button>
+                <button type="button" id="multiselect_rightSelected" class="btn btn-block" v-on:click="addMultiJobDependency(selectedDependableJobList, false)"><i class="glyphicon glyphicon-chevron-right"></i></button>
+                <button type="button" id="multiselect_leftSelected" class="btn btn-block" v-on:click="deleteMultiJobDependency(addedDependableJobList, false)"><i class="glyphicon glyphicon-chevron-left"></i></button>
+                <button type="button" id="multiselect_leftAll" class="btn btn-block" v-on:click="deleteMultiJobDependency(dependentJobList, true)"><i class="glyphicon glyphicon-backward"></i></button>
             </div>
 
             <div class="col-xs-5">
-                <select name="to" id="multiselect_to" class="form-control" size="8" multiple="multiple"></select>
+                <select name="to" id="multiselect_to" v-model="addedDependableJobList" class="form-control" size="10" multiple="multiple">
+                    <option v-for="(dj,index) in dependentJobList" v-bind:value="dj.ID" v-on:dblclick="deleteJobDependency(index)">{{dj.JobName}}</option>
+                </select>
             </div>
         </div>
     </div>
     <span slot="footer">
         <button type="button" class="btn btn-default" v-on:click="showConfigModel = false">Cancel</button>
-        <button type="button" class="btn btn-primary" v-on:click="SaveJob($event)">Save</button>
+        <button type="button" class="btn btn-primary" v-on:click="SaveJobDependency($event)">Save</button>
     </span>
 </vb-modal>
 

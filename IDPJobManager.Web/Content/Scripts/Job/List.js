@@ -21,7 +21,11 @@ var d = {
     totalCount: 0,
     showAddOrEditModel: false,
     showConfigModel: false,
-    dependableJobs: [],
+    currentConfigJobID: '',
+    dependentJobList: [],
+    dependableJobList: [],
+    selectedDependableJobList: [],
+    addedDependableJobList: [],
     Model: {
         ID: '',
         JobName: '',
@@ -262,6 +266,84 @@ var vm = new Vue({
                 this.validation.CronExpression = null;
                 this.Model.ID = '';
             }, 200);
+        },
+        configurateDependency(id, event) {
+            this.$nextTick(() => {
+                var that = this;
+                $.get('/Job/GetJobDependency/', { "ID": id }, function (data) {
+                    if (data) {
+                        that.currentConfigJobID = id;
+                        that.dependableJobList = data.DependableJobList;
+                        that.dependentJobList = data.DependentJobList;
+                        that.showConfigModel = true;
+                    }
+                });
+                event.preventDefault();
+            });
+        },
+        SaveJobDependency(event) {
+            this.$nextTick(() => {
+                var that = this;
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: '/Job/SaveJobDependency/',
+                    data: JSON.stringify({ "ID": this.currentConfigJobID, "DependentJobIDs": this.dependentJobList.map(j => j.ID) }),
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        console.debug(data);
+                        if (data && data.success) {
+                            that.showConfigModel = false;
+                        }
+                    },
+                    error: function (data) {
+                        console.debug(data);
+                    }
+                });
+                event.preventDefault();
+            })
+        },
+        addJobDependency(index) {
+            var item = this.dependableJobList[index];
+            Vue.delete(this.dependableJobList, index);
+            this.dependentJobList.push(item);
+        },
+        deleteJobDependency(index) {
+            var item = this.dependentJobList[index];
+            Vue.delete(this.dependentJobList, index);
+            this.dependableJobList.push(item);
+        },
+        addMultiJobDependency(list, isAll) {
+            var mList = list || [];
+            if (mList.length == 0) return;
+            for (var i = 0, flag = true; i < this.dependableJobList.length; flag ? i++ : i) {
+                for (var j = 0; j < list.length; j++) {
+                    if (!isAll && this.dependableJobList[i].ID === list[j] || isAll && this.dependableJobList[i] === list[j]) {
+                        this.dependentJobList.push(this.dependableJobList.splice(i, 1)[0]);
+                        flag = false;
+                        break;
+                    }
+                    else {
+                        flag = true;
+                    }
+                }
+            }
+        },
+        deleteMultiJobDependency(list, isAll) {
+            var mList = list || [];
+            if (mList.length == 0) return;
+            for (var i = 0, flag = true; i < this.dependentJobList.length; flag ? i++ : i) {
+                for (var j = 0; j < list.length; j++) {
+                    if (!isAll && this.dependentJobList[i].ID === list[j] || isAll && this.dependentJobList[i] === list[j]) {
+                        this.dependableJobList.push(this.dependentJobList.splice(i, 1)[0]);
+                        flag = false;
+                        break;
+                    }
+                    else {
+                        flag = true;
+                    }
+                }
+            }
         }
     },
     computed: {

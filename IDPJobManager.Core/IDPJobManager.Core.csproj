@@ -84,6 +84,7 @@
     <Compile Include="Commands\Job\DeleteJobCommandInvoker.cs" />
     <Compile Include="Commands\Job\AddJobCommandInvoker.cs" />
     <Compile Include="Commands\Job\EditJobCommandInvoker.cs" />
+    <Compile Include="Commands\Job\EditJobDependencyCommandInvoker.cs" />
     <Compile Include="Commands\Job\StartJobCommandInvoker.cs" />
     <Compile Include="Commands\Job\StopJobCommandInvoker.cs" />
     <Compile Include="Config\GlobalConfig.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\NativeWindowApiUtil.cs" />
     <Compile Include="ViewProjections\Job\AllJobsViewProjection.cs" />
+    <Compile Include="ViewProjections\Job\JobDependencyViewProjection.cs" />
     <Compile Include="ViewProjections\Job\JobViewProjection.cs" />
   </ItemGroup>
   <ItemGroup>
