@@ -17,44 +17,45 @@
         }
     </style>
 }
-
 <div class="row">
-    <div class="col-lg-12">
-        <form class="form-horizontal" role="form">
-            <fieldset>
-                <div class="form-group">
-                    <label class="col-sm-1 control-label" for="ds_host">Job Name</label>
-                    <div class="col-sm-3">
-                        <input class="form-control" id="ds_host" type="text" placeholder="Please input job name" v-model="JobName" />
-                    </div>
-                    <label class="col-sm-2 control-label" style="width:120px" for="dtStart">Create Time</label>
-                    <div class="col-sm-2" style="width:240px;">
-                        <div class='input-group date form_dateperiod' id='dtStart'>
-                            <input type='text' class="form-control" v-model="StartDate" />
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
-                    </div>
-                    <label class="col-sm-1 control-label" style="width:10px;">-</label>
-                    <div class="col-sm-2" style="width:240px;">
-                        <div class='input-group date form_dateperiod' id='dtEnd'>
-                            <input type='text' class="form-control" v-model="EndDate" />
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="col-sm-1">
-                        <button class="btn btn-primary" id="btn_search" v-on:click="searchJobs($event)">Search</button>
-                    </div>
-                </div>
-            </fieldset>
-        </form>
+    <div class="col-md-3">
+        <label class="col-md-4 control-label" for="ds_host">Job Name</label>
+        <div class="col-md-8">
+            <input class="form-control" id="ds_host" type="text" placeholder="Please input job name" v-model="JobName" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <label class="col-md-4 control-label" for="ds_host">Job Group</label>
+        <div class="col-md-8">
+            <input class="form-control" id="ds_host" type="text" placeholder="Please input job group" v-model="JobGroup" />
+        </div>
+    </div>
+    <div class="col-md-5">
+        <label class="col-md-1 control-label" for="dtStart">Create Time</label>
+        <div class="col-md-5">
+            <div class='input-group date form_dateperiod' id='dtStart'>
+                <input type='text' class="form-control" v-model="StartDate" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <label class="col-md-1 control-label" style="width:10px;">-</label>
+        <div class="col-md-5">
+            <div class='input-group date form_dateperiod' id='dtEnd'>
+                <input type='text' class="form-control" v-model="EndDate" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-1">
+        <button class="btn btn-primary" id="btn_search" v-on:click="searchJobs($event)">Search</button>
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-md-12">
         <div class="app-toolbar">
             <button class="btn btn-default btn-sm" id="btn_Add" v-on:click="AddJob">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
@@ -77,6 +78,7 @@
                 <tbody>
                     <tr v-for="(item,index) in items">
                         <td>{{item.JobName}}</td>
+                        <td>{{item.JobGroup}}</td>
                         <td><span v-show="item.Status == 1" class="label label-success">Start</span><span v-show="item.Status == 0" class="label label-warning">Stop</span></td>
                         <td>{{item.AssemblyName}}</td>
                         <td>{{item.ClassName}}</td>
@@ -108,36 +110,42 @@
     <div id="divEdit" slot="body">
         <div class="form-horizontal">
             <div class="form-group">
-                <label class="control-label col-sm-4">Job Name<span class="required-tip">*</span></label>
-                <div class="col-sm-6">
-                    <input class="form-control" type="text" v-model="Model.JobName" v-on:blur="beRequired('JobName')" />
+                <label class="control-label col-md-4">Job Name<span class="required-tip">*</span></label>
+                <div class="col-md-6">
+                    <input class="form-control" type="text" v-model="Model.JobName" v-on:input="beRequired('JobName')" v-on:blur="beRequired('JobName')"/>
                 </div>
                 <span class="tip">{{validation.JobName}}</span>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-4">Assembly Name<span class="required-tip">*</span></label>
-                <div class="col-sm-6">
-                    <input class="form-control" type="text" v-model="Model.AssemblyName" v-on:blur="beRequired('AssemblyName')" />
+                <label class="control-label col-md-4">Job Group</label>
+                <div class="col-md-6">
+                    <input class="form-control" type="text" v-model="Model.JobGroup" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-4">Assembly Name<span class="required-tip">*</span></label>
+                <div class="col-md-6">
+                    <input class="form-control" type="text" v-model="Model.AssemblyName" v-on:input="beRequired('AssemblyName')" v-on:blur="beRequired('AssemblyName')"/>
                 </div>
                 <span class="tip">{{validation.AssemblyName}}</span>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-4">Class Name<span class="required-tip">*</span></label>
-                <div class="col-sm-6">
-                    <input class="form-control" type="text" v-model="Model.ClassName" v-on:blur="beRequired('ClassName')" />
+                <label class="control-label col-md-4">Class Name<span class="required-tip">*</span></label>
+                <div class="col-md-6">
+                    <input class="form-control" type="text" v-model="Model.ClassName" v-on:input="beRequired('ClassName')" v-on:blur="beRequired('ClassName')"/>
                 </div>
                 <span class="tip">{{validation.ClassName}}</span>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-4">Cron Expression<span class="required-tip">*</span></label>
-                <div class="col-sm-6">
-                    <input class="form-control" type="text" v-model="Model.CronExpression" v-on:blur="beRequired('CronExpression')" />
+                <label class="control-label col-md-4">Cron Expression<span class="required-tip">*</span></label>
+                <div class="col-md-6">
+                    <input class="form-control" type="text" v-model="Model.CronExpression" v-on:input="beRequired('CronExpression')" v-on:blur="beRequired('CronExpression')"/>
                 </div>
                 <span class="tip">{{validation.CronExpression}}</span>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-4">Start Time</label>
-                <div class="col-sm-6">
+                <label class="control-label col-md-4">Start Time</label>
+                <div class="col-md-6">
                     <div class="input-group date form_dateperiod" id="dtModelStartTime">
                         <input type=text class="form-control" v-model="Model.StartTimeString" />
                         <span class="input-group-addon">
@@ -147,8 +155,8 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-4">End Time</label>
-                <div class="col-sm-6">
+                <label class="control-label col-md-4">End Time</label>
+                <div class="col-md-6">
                     <div class="input-group date form_dateperiod" id="dtModelEndTime">
                         <input type=text class="form-control" v-model="Model.EndTimeString" />
                         <span class="input-group-addon">
@@ -157,22 +165,11 @@
                     </div>
                 </div>
             </div>
-            @*<div class="form-group">
-                    <label class="control-label col-sm-4">Status</label>
-                    <div class="col-sm-6">
-                        <label class="radio-inline">
-                            <input type="radio" value="0" name="statusType" v-model="Model.Status"> Stop
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" value="1" name="statusType" v-model="Model.Status"> Start
-                        </label>
-                    </div>
-                </div>*@
         </div>
     </div>
     <span slot="footer">
         <button type="button" class="btn btn-default" v-on:click="showAddOrEditModel = false">Cancel</button>
-        <button type="button" class="btn btn-primary" :class="{'disabled' : Model.ID == '' && !valid}" v-on:click="SaveJob($event)">Save</button>
+        <button type="button" class="btn btn-primary" :class="{'disabled' : beforeFirstValidation || !valid}" v-on:click="SaveJob($event)">Save</button>
     </span>
 </vb-modal>
 <!-- /Edit -->

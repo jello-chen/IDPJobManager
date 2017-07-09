@@ -22,6 +22,9 @@ namespace IDPJobManager.Core.Commands.Job
                         job.ClassName = command.ClassName;
                         job.CronExpression = command.CronExpression;
 
+                        if(!string.IsNullOrWhiteSpace(command.JobGroup))
+                            job.JobGroup = command.JobGroup;
+
                         DateTime startTime = DateTime.MinValue;
                         DateTime endTime = DateTime.MinValue;
                         if (DateTime.TryParse(command.StartTimeString, out startTime))
@@ -51,6 +54,7 @@ namespace IDPJobManager.Core.Commands.Job
     public class EditJobCommand : JobCommand
     {
         public string JobName { get; set; }
+        public string JobGroup { get; set; }
         public string AssemblyName { get; set; }
         public string ClassName { get; set; }
         public string CronExpression { get; set; }

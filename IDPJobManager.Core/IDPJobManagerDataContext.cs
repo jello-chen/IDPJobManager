@@ -16,6 +16,8 @@ namespace IDPJobManager.Core
 
         public virtual DbSet<JobDependency> T_JobDependency { get; set; }
 
+        public virtual DbSet<JobPerformance> T_JobPerformance { get; set; }
+
         public void FixEfProviderServicesProblem()
         {
             var instance = System.Data.Entity.SqlServer.SqlProviderServices.Instance;

@@ -12,6 +12,8 @@ namespace IDPJobManager.Core.Domain
         [StringLength(300)]
         public string JobName { get; set; }
 
+        public string JobGroup { get; set; }
+
         public string JobParam { get; set; }
 
         [StringLength(200)]

@@ -23,13 +23,13 @@ namespace IDPJobManager.Core.Commands.Job
                 var job = jobSets.FirstOrDefault(j => j.ID == command.ID);
                 if (job != null)
                 {
-                    if (scheduler.PauseJob(job.ID.ToString()))
+                    if (scheduler.PauseJob(job))
                     {
                         job.Status = 0;
                         dataContext.SaveChanges();
                     }
                 }
-                return CommandResult.SuccessResult; 
+                return CommandResult.SuccessResult;
             }
         }
     }

@@ -1,14 +1,20 @@
-﻿using log4net;
+﻿using IDPJobManager.Core;
+using log4net;
 using Quartz;
 using System;
 
 namespace IDPJobManager.Jobs
 {
-    public class HelloJob : IJob
+    public class HelloJob : DependableJob
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob));
 
-        public void Execute(IJobExecutionContext context)
+        //public void Execute(IJobExecutionContext context)
+        //{
+        //    logger.Info($"[HelloJob]{DateTime.Now.ToString()}");
+        //}
+
+        public override void DoExecute(IJobExecutionContext context)
         {
             logger.Info($"[HelloJob]{DateTime.Now.ToString()}");
         }

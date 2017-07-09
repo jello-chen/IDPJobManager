@@ -104,6 +104,7 @@
     <Compile Include="Modules\AccountModule.cs" />
     <Compile Include="Modules\ApiModule.cs" />
     <Compile Include="Modules\JobModule.cs" />
+    <Compile Include="Modules\PerformanceModule.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="Configuration\ConfigProvider.cs" />
     <Compile Include="Configuration\IDPJobManagerConfiguration.cs" />
@@ -116,7 +117,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Scripts\Home\Index.js" />
     <Content Include="Content\Scripts\Job\List.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Scripts\Performance\List.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Scripts\vue-form.min.js">
@@ -200,6 +205,7 @@
     <EmbeddedResource Include="Views\Account\Login.cshtml" />
     <EmbeddedResource Include="Views\Job\List.cshtml" />
     <EmbeddedResource Include="Views\Api\Doc.cshtml" />
+    <EmbeddedResource Include="Views\Performance\List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IDPJobManager.Core\IDPJobManager.Core.csproj">

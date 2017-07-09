@@ -1,8 +1,6 @@
 ﻿using IDPJobManager.Core.Domain;
 using IDPJobManager.Core.Utils;
 using Quartz;
-using Quartz.Impl;
-using Quartz.Impl.Triggers;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -34,41 +32,42 @@ namespace IDPJobManager.Core.Extensions
 
             try
             {
-                var jobId = jobInfo.ID;
-
-                //Gets the dependent job list and schedule them.
-                var dependentJobs = JobOperator.GetDependentJobInfoList(jobId);
-                if (dependentJobs.Count > 0)
-                {
-                    foreach (var job in dependentJobs)
-                    {
-                        job.StartTime = null;
-                        job.EndTime = null;
-                        job.Status = jobInfo.Status;
-                        ScheduleJob(scheduler, job);
-                    }
-                }
-
-                var jobIdentity = jobId.ToString();
-                var jobKey = new JobKey(jobIdentity);
+                var jobName = jobInfo.JobName;
+                var jobGroup = string.IsNullOrWhiteSpace(jobInfo.JobGroup) ? null : jobInfo.JobGroup;
+                var jobKey = new JobKey(jobName, jobGroup);
                 if (!scheduler.CheckExists(jobKey))
                 {
                     var assemblyScanner = new AssemblyScanner(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Jobs"));
                     var jobType = assemblyScanner.GetType(jobInfo.AssemblyName, jobInfo.ClassName);
-                    var jobDetail = new JobDetailImpl(jobIdentity, jobType);
-                    var jobTrigger = new CronTriggerImpl();
-                    jobTrigger.CronExpressionString = jobInfo.CronExpression;
-                    jobTrigger.Name = jobIdentity;
-                    jobTrigger.Description = jobInfo.JobName;
+                    if (!jobType.Is<IJob>())
+                    {
+                        Logger.Instance.ErrorFormat("Class `{0},{1}` does not implement the IJob interface.");
+                        return false;
+                    }
+
+                    //Builds the job detail
+                    var jobDetail = JobBuilder.Create(jobType)
+                        .WithIdentity(jobKey)
+                        .Build();
+
+                    //Builds the job trigger
+                    var jobTriggerBuilder = TriggerBuilder.Create()
+                        .WithIdentity($"{jobName}Trigger", jobGroup)
+                        .WithDescription($"{jobName} Trigger")
+                        .WithCronSchedule(jobInfo.CronExpression);
                     if (jobInfo.StartTime.HasValue)
-                        jobTrigger.StartTimeUtc = jobInfo.StartTime.Value;
-                    jobTrigger.EndTimeUtc = jobInfo.EndTime;
+                        jobTriggerBuilder.StartAt(jobInfo.StartTime.Value);
+                    if (jobInfo.EndTime.HasValue)
+                        jobTriggerBuilder.EndAt(jobInfo.EndTime.Value);
+                    var jobTrigger = jobTriggerBuilder.Build();
+
+                    //Decides whether to schedule the job by status
                     scheduler.ScheduleJob(jobDetail, jobTrigger);
-                    if (jobInfo.Status == 0) scheduler.PauseJob(jobKey);
+                    if (jobInfo.Status == 0) scheduler.PauseJob(jobInfo);
                 }
                 else
                 {
-                    if (jobInfo.Status == 1) scheduler.ResumeJob(jobIdentity);
+                    if (jobInfo.Status == 1) scheduler.ResumeJob(jobKey);
                 }
                 return true;
             }
@@ -95,11 +94,10 @@ namespace IDPJobManager.Core.Extensions
         public static bool UnscheduleJob(this IScheduler scheduler, JobInfo jobInfo)
         {
             Ensure.Requires<ArgumentNullException>(scheduler != null, "sheduler should not be null.");
-            var jobIdentity = jobInfo.ID.ToString();
-            var jobKey = new JobKey(jobIdentity);
+            var jobKey = new JobKey(jobInfo.JobName, jobInfo.JobGroup);
             if (scheduler.CheckExists(jobKey))
             {
-                return scheduler.UnscheduleJob(new TriggerKey(jobIdentity));
+                return scheduler.UnscheduleJob(new TriggerKey($"{jobInfo.JobName}Trigger", jobInfo.JobGroup));
             }
             return true;
         }
@@ -117,53 +115,53 @@ namespace IDPJobManager.Core.Extensions
             return result;
         }
 
-        public static bool ResumeJob(this IScheduler scheduler, string jobKey)
+        public static bool ResumeJob(this IScheduler scheduler, JobInfo jobInfo)
         {
-            var _jobKey = new JobKey(jobKey);
-            if (scheduler.CheckExists(_jobKey))
+            var jobKey = new JobKey(jobInfo.JobName, jobInfo.JobGroup);
+            if (scheduler.CheckExists(jobKey))
             {
-                scheduler.ResumeJob(_jobKey);
+                scheduler.ResumeJob(jobKey);
             }
             return true;
         }
 
-        public static bool PauseJob(this IScheduler scheduler, string jobKey, bool isUpdateDB = false)
+        public static bool PauseJob(this IScheduler scheduler, JobInfo jobInfo, bool isUpdateDB = false)
         {
-            var _jobKey = new JobKey(jobKey);
-            if (scheduler.CheckExists(_jobKey))
+            var jobKey = new JobKey(jobInfo.JobName, jobInfo.JobGroup);
+            if (scheduler.CheckExists(jobKey))
             {
-                scheduler.PauseJob(_jobKey);
-                var jobDetail = scheduler.GetJobDetail(_jobKey);
+                scheduler.PauseJob(jobKey);
+                var jobDetail = scheduler.GetJobDetail(jobKey);
                 if (jobDetail.JobType.GetInterface("IInterruptableJob") != null)
                 {
-                    scheduler.Interrupt(_jobKey);
+                    scheduler.Interrupt(jobKey);
                 }
             }
             if (isUpdateDB)
-                scheduler.PauseJob(_jobKey);
+                scheduler.PauseJob(jobKey);
             return true;
         }
 
-        public static async Task<bool> PauseJobsAsync(this IScheduler scheduler, List<string> jobKeys = null, bool isUpdateDB = false)
+        public static async Task<bool> PauseJobsAsync(this IScheduler scheduler, List<JobInfo> jobInfos = null, bool isUpdateDB = false)
         {
             Ensure.Requires<ArgumentNullException>(scheduler != null, "sheduler should not be null.");
-            if (jobKeys == null)
-                jobKeys = (await JobOperator.GetJobInfoListAsync()).Select(t => t.ID.ToString()).ToList();
+            if (jobInfos == null)
+                jobInfos = await JobOperator.GetJobInfoListAsync();
             var result = false;
-            foreach (var jobkey in jobKeys)
+            foreach (var jobInfo in jobInfos)
             {
-                result |= PauseJob(scheduler, jobkey, isUpdateDB);
+                result |= PauseJob(scheduler, jobInfo, isUpdateDB);
             }
             return result;
         }
 
-        public static bool DeleteJob(this IScheduler scheduler, string jobKey)
+        public static bool DeleteJob(this IScheduler scheduler, JobInfo jobInfo)
         {
             Ensure.Requires<ArgumentNullException>(scheduler != null, "sheduler should not be null.");
-            var _jobKey = new JobKey(jobKey);
-            if (scheduler.CheckExists(_jobKey))
+            var jobKey = new JobKey(jobInfo.JobName, jobInfo.JobGroup);
+            if (scheduler.CheckExists(jobKey))
             {
-                return scheduler.DeleteJob(_jobKey);
+                return scheduler.DeleteJob(jobKey);
             }
             return true;
         }
@@ -212,12 +210,16 @@ namespace IDPJobManager.Core.Extensions
             }
         }
 
-        public static async Task<bool> UpdateRecentRunTimeAsync(Guid id, DateTime recentRunTime)
+        public static async Task<bool> UpdateRecentRunTimeAsync(string jobName, string jobGroup, DateTime recentRunTime)
         {
             using (var dataContext = new IDPJobManagerDataContext())
             {
                 var jobInfoList = dataContext.Set<JobInfo>();
-                var jobInfo = jobInfoList.FirstOrDefault(j => j.ID == id);
+                JobInfo jobInfo = null;
+                if (string.IsNullOrWhiteSpace(jobGroup) || jobGroup.ToUpper() == "DEFAULT")
+                    jobInfo = jobInfoList.FirstOrDefault(j => j.JobName == jobName);
+                else
+                    jobInfo = jobInfoList.FirstOrDefault(j => j.JobName == jobName && j.JobGroup == jobGroup);
                 if (jobInfo != null)
                 {
                     jobInfo.RecentRunTime = recentRunTime;
@@ -227,12 +229,16 @@ namespace IDPJobManager.Core.Extensions
             }
         }
 
-        public static async Task<bool> UpdateNextFireTimeAsync(Guid id, DateTime nextFireTime)
+        public static async Task<bool> UpdateNextFireTimeAsync(string jobName, string jobGroup, DateTime nextFireTime)
         {
             using (var dataContext = new IDPJobManagerDataContext())
             {
                 var jobInfoList = dataContext.Set<JobInfo>();
-                var jobInfo = jobInfoList.FirstOrDefault(j => j.ID == id);
+                JobInfo jobInfo = null;
+                if (string.IsNullOrWhiteSpace(jobGroup) || jobGroup.ToUpper() == "DEFAULT")
+                    jobInfo = jobInfoList.FirstOrDefault(j => j.JobName == jobName);
+                else
+                    jobInfo = jobInfoList.FirstOrDefault(j => j.JobName == jobName && j.JobGroup == jobGroup);
                 if (jobInfo != null)
                 {
                     jobInfo.NextFireTime = nextFireTime;
@@ -253,6 +259,59 @@ namespace IDPJobManager.Core.Extensions
                             where p.JobID == id
                             select j;
                 return query.ToList();
+            }
+        }
+
+        public static List<JobInfo> GetDependentJobInfoList(string jobName, string jobGroup)
+        {
+            using (var dataContext = new IDPJobManagerDataContext())
+            {
+                var jobInfo = dataContext.T_Job.FirstOrDefault(j => j.JobName == jobName && j.JobGroup == jobGroup);
+                if (jobInfo != null)
+                {
+                    var query = from p in dataContext.T_JobDependency
+                                join q in dataContext.T_Job
+                                on p.DependentJobID equals q.ID into g
+                                from j in g.DefaultIfEmpty()
+                                where p.JobID == jobInfo.ID
+                                select j;
+                    return query.ToList();
+                }
+                return new List<JobInfo>();
+            }
+        }
+
+        public static int GetJobStatus(string jobName, string jobGroup)
+        {
+            using (var dataContext = new IDPJobManagerDataContext())
+            {
+                var jobInfoList = dataContext.Set<JobInfo>();
+                JobInfo jobInfo = null;
+                if (string.IsNullOrWhiteSpace(jobGroup) || jobGroup.ToUpper() == "DEFAULT")
+                    jobInfo = jobInfoList.FirstOrDefault(j => j.JobName == jobName);
+                else
+                    jobInfo = jobInfoList.FirstOrDefault(j => j.JobName == jobName && j.JobGroup == jobGroup);
+                if (jobInfo != null && jobInfo.Status.HasValue)
+                    return jobInfo.Status.Value;
+                return 0;
+            }
+        }
+
+        public static bool AddJobPerformance(JobPerformance jobPerformance)
+        {
+            try
+            {
+                using (var dataContext = new IDPJobManagerDataContext())
+                {
+                    dataContext.T_JobPerformance.Add(jobPerformance);
+                    dataContext.SaveChanges();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.Error(ex.Message);
+                return false;
             }
         }
     }

@@ -65,6 +65,12 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IDPJobManager.Core\IDPJobManager.Core.csproj">
+      <Project>{52285afe-41d2-4179-b53e-a0b902e7c2f4}</Project>
+      <Name>IDPJobManager.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

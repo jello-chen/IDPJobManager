@@ -4,10 +4,7 @@
     using Core.Commands.Job;
     using Core.ViewProjections.Job;
     using Nancy;
-    using Nancy.Metadata.Modules;
     using Nancy.ModelBinding;
-    using Nancy.Swagger;
-    using Swagger.ObjectModel;
 
     public class JobModule : BaseModule
     {

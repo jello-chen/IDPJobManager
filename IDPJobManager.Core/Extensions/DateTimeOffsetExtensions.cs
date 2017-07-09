@@ -19,5 +19,15 @@
 
             return null;
         }
+
+        public static DateTime GetStartDateTimeOfDay(this DateTime dt)
+        {
+            return new DateTime(dt.Year, dt.Month, dt.Day);
+        }
+
+        public static DateTime GetEndDateTimeOfDay(this DateTime dt)
+        {
+            return new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59, 999);
+        }
     }
 }

@@ -1,52 +1,42 @@
 ﻿namespace IDPJobManager.Web.Modules
 {
     using Core;
-    using Core.SchedulerProviders;
-    using Configuration;
-    using System.Linq;
-    using Core.Domain;
-    using Nancy;
+    using IDPJobManager.Core.ViewProjections.Performance;
+    using IDPJobManager.Core.ViewProjections.Job;
+    using System;
+    using IDPJobManager.Core.Extensions;
 
     public class HomeModule : BaseModule
     {
-        private static readonly ISchedulerDataProvider SchedulerDataProvider;
 
-        static HomeModule()
-        {
-            ISchedulerProvider schedulerProvider = ConfigProvider.GetInstance(IDPJobManagerStarter.Scheduler).SchedulerProvider;
+        private readonly IViewProjectionFactory viewProjectionFactory;
+        private readonly ICommandInvokerFactory commandInvokerFactory;
 
-            SchedulerDataProvider = new DefaultSchedulerDataProvider(schedulerProvider);
-        }
-
-        public HomeModule()
+        public HomeModule(IViewProjectionFactory viewProjectionFactory,
+            ICommandInvokerFactory commandInvokerFactory)
             : base()
         {
+            this.viewProjectionFactory = viewProjectionFactory;
+            this.commandInvokerFactory = commandInvokerFactory;
+
             Get["/"] = _ =>
             {
-                ViewBag["SelfVersion"] = GetType().Assembly.GetName().Version.ToString();
-                ViewBag["QuartzVersion"] = typeof(Quartz.Impl.StdScheduler).Assembly.GetName().Version.ToString();
-                return View["Index", SchedulerDataProvider.Data];
+                ViewBag.NewJobCount = GetNewJobCount();
+                ViewBag.NewPerformanceCount = GetNewPerformanceCount();
+                return View["Index"];
             };
+        }
 
-            Get["/jobdetails/{job}/{group}"] = _ =>
-            {
-                var job = (string)_.job;
-                var group = (string)_.group;
+        private int GetNewJobCount()
+        {
+            var vm = viewProjectionFactory.Get<AllJobsBindingModel, AllJobsViewModel>(new AllJobsBindingModel { StartDate = DateTime.Now.GetStartDateTimeOfDay()});
+            return vm.TotalCount;
+        }
 
-                var detailsData = SchedulerDataProvider.GetJobDetailsData(job, group);
-
-                var jobDataMap = detailsData
-                    .JobDataMap
-                    .Select(pair => new Property(pair.Key.ToString(), pair.Value))
-                    .ToArray();
-
-                var jobProperties = detailsData
-                    .JobProperties
-                    .Select(pair => new Property(pair.Key, pair.Value))
-                    .ToArray();
-
-                return View["Content_Job_Details.haml", new { datamaps = jobDataMap, properties = jobProperties }];
-            };
+        private int GetNewPerformanceCount()
+        {
+            var vm = viewProjectionFactory.Get<AllPerformancesBindingModel, AllPerformancesViewModel>(new AllPerformancesBindingModel { StartDate = DateTime.Now.GetStartDateTimeOfDay() });
+            return vm.TotalCount;
         }
     }
 }

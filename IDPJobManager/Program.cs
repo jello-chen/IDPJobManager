@@ -30,6 +30,7 @@ namespace IDPJobManager
                         .HostedOnDefault()
                         .Start())
                 {
+                    AppDomain.MonitoringIsEnabled = true;
                     Console.WriteLine($"Web host started on {IDPJobManagerStarter.Configure.BaseUri}.");
                     scheduler.StartRunning().ScheduleJobsAsync().Wait();
                     Console.Read();

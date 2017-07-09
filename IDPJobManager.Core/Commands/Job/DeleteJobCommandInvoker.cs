@@ -21,7 +21,7 @@ namespace IDPJobManager.Core.Commands.Job
                 var job = jobSets.FirstOrDefault(j => j.ID == command.ID);
                 if (job != null)
                 {
-                    scheduler.DeleteJob(new JobKey(command.ID.ToString()));
+                    scheduler.DeleteJob(new JobKey(job.JobName, job.JobGroup));
                     job.IsDelete = 1;
                     dataContext.SaveChanges();
                 }

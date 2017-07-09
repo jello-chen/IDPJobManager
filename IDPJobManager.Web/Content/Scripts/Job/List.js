@@ -1,10 +1,12 @@
 ﻿
 var d = {
     JobName: '',
+    JobGroup: '',
     StartDate: '',
     EndDate: '',
     colHeaders: [
         { name: 'JobName', index: 'JobName', label: 'Job Name', sortable: true },
+        { name: 'JobGroup', index: 'JobGroup', label: 'Job Group', sortable: true },
         { name: 'Status', index: 'Status', label: 'Status' },
         { name: 'AssemblyName', index: 'AssemblyName', label: 'Assembly Name' },
         { name: 'ClassName', index: 'ClassName', label: 'Class Name' },
@@ -29,6 +31,7 @@ var d = {
     Model: {
         ID: '',
         JobName: '',
+        JobGroup: '',
         AssemblyName: '',
         ClassName: '',
         CronExpression: '',
@@ -111,6 +114,12 @@ var vm = new Vue({
             var tip = this.Model[field] ? '' : field + ' is required.';
             this.$set(this.validation, field, tip);
         },
+        validate: function () {
+            var validatingProperties = ["JobName", "AssemblyName", "ClassName", "CronExpression"];
+            for (var i = 0; i < validatingProperties.length; i++) {
+                this.beRequired(validatingProperties[i]);
+            }
+        },
         pageChanged: function (page) {
             this.pageCurrent = page.pageCurrent;
             this.pageSize = page.pageSize;
@@ -152,6 +161,7 @@ var vm = new Vue({
                 SortKey: this.sortKey,
                 SortType: this.sortType,
                 JobName: this.JobName,
+                JobGroup: this.JobGroup,
                 StartDate: this.StartDate,
                 EndDate: this.EndDate
             }
@@ -254,6 +264,7 @@ var vm = new Vue({
         resetAddOrEdit: function () {
             setTimeout(() => {
                 this.Model.JobName = '';
+                this.Model.JobGroup = '';
                 this.Model.AssemblyName = '';
                 this.Model.ClassName = '';
                 this.Model.CronExpression = '';
@@ -349,6 +360,14 @@ var vm = new Vue({
     computed: {
         sortType: function () {
             return this.sortOrders[this.sortKey] > 0 ? 'asc' : 'desc';
+        },
+        beforeFirstValidation: function () {
+            var result = true;
+            var validatingProperties = ["JobName", "AssemblyName", "ClassName", "CronExpression"];
+            for (var i = 0; i < validatingProperties.length; i++) {
+                result = result && validatingProperties[i] === null;
+            }
+            return result;
         }
     },
     watch: {
@@ -368,6 +387,11 @@ var vm = new Vue({
         showAddOrEditModel: function (val, oldVal) {
             if (val === false) {
                 this.resetAddOrEdit();
+            }
+            else {
+                if (this.Model.ID != '') {
+                    this.validate();
+                }
             }
         },
         StartDate: function (val, oldVal) {

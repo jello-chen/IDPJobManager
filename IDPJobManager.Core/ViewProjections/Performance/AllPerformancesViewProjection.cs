@@ -5,18 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using IDPJobManager.Core.Extensions;
 
-namespace IDPJobManager.Core.ViewProjections.Job
+namespace IDPJobManager.Core.ViewProjections.Performance
 {
-    public class AllJobsViewProjection : IViewProjection<AllJobsBindingModel, AllJobsViewModel>
+    public class AllPerformancesViewProjection : IViewProjection<AllPerformancesBindingModel, AllPerformancesViewModel>
     {
-
-        public AllJobsViewModel Project(AllJobsBindingModel input)
+        public AllPerformancesViewModel Project(AllPerformancesBindingModel input)
         {
-
             using (var dataContext = new IDPJobManagerDataContext())
             {
-                var query = from j in dataContext.Set<JobInfo>()
-                            where j.IsDelete == 0
+                var query = from j in dataContext.Set<JobPerformance>()
                             select j;
 
                 if (!string.IsNullOrEmpty(input.JobName))
@@ -26,13 +23,13 @@ namespace IDPJobManager.Core.ViewProjections.Job
                     query = query.Where(j => j.JobGroup.Contains(input.JobGroup));
 
                 if (input.StartDate != DateTime.MinValue)
-                    query = query.Where(j => j.CreatedTime >= input.StartDate);
+                    query = query.Where(j => j.CreateTime >= input.StartDate);
 
                 if (input.EndDate != DateTime.MinValue)
                 {
                     var endDate = input.EndDate.GetEndDateTimeOfDay();
-                    query = query.Where(j => j.CreatedTime <= endDate);
-                }  
+                    query = query.Where(j => j.CreateTime <= endDate);
+                }
 
                 var totalCount = query.Count();
 
@@ -42,30 +39,24 @@ namespace IDPJobManager.Core.ViewProjections.Job
                 }
                 else
                 {
-                    query = query.OrderByDescending(j => j.CreatedTime).ThenByDescending(j => j.ModifyTime);
+                    query = query.OrderByDescending(j => j.StartTime).ThenByDescending(j => j.EndTime);
                 }
 
-                var jobs = query
+                var jobPerformances = query
                             .Skip((input.PageCurrent - 1) * input.PageSize)
                             .Take(input.PageSize)
                             .ToList();
 
-                return new AllJobsViewModel
+                return new AllPerformancesViewModel
                 {
-                    Items = jobs,
+                    Items = jobPerformances,
                     TotalCount = totalCount
-                }; 
+                };
             }
         }
     }
 
-    public class AllJobsViewModel
-    {
-        public IEnumerable<JobInfo> Items { get; set; }
-        public int TotalCount { get; set; }
-    }
-
-    public class AllJobsBindingModel : IPager, ISortor
+    public class AllPerformancesBindingModel : IPager, ISortor
     {
         public string JobName { get; set; }
         public string JobGroup { get; set; }
@@ -104,7 +95,13 @@ namespace IDPJobManager.Core.ViewProjections.Job
         {
             get { return sortType; }
             set { sortType = value; }
-        } 
+        }
         #endregion
+    }
+
+    public class AllPerformancesViewModel
+    {
+        public IEnumerable<JobPerformance> Items { get; set; }
+        public int TotalCount { get; set; }
     }
 }
