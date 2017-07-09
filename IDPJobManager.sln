@@ -23,6 +23,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jobs", "Jobs", "{8775F633-4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Topshelf.Nancy", "Topshelf.Nancy\Topshelf.Nancy.csproj", "{E88EF622-49AA-4BC9-B56E-20989BD3468C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{75D434C1-2A60-4FDF-A354-8930D8D83D34}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Html", "Html", "{FAE3E7C1-2F4A-402B-9E05-B9FA425906A1}"
+	ProjectSection(SolutionItems) = preProject
+		sb-admin-2.zip = sb-admin-2.zip
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Script", "Script", "{100D0048-EE60-4265-B2EB-271E83565460}"
+	ProjectSection(SolutionItems) = preProject
+		IDP-JobManager.sql = IDP-JobManager.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,5 +78,7 @@ Global
 		{EF571E18-C988-42CB-B550-C3FEA0F94A5B} = {304254DA-3A69-4284-8804-9CCD037E6329}
 		{95EE2DF2-8478-4104-86AA-D4888F657A02} = {8775F633-4765-4DF6-A952-06C983685800}
 		{E88EF622-49AA-4BC9-B56E-20989BD3468C} = {6655AFD1-AD78-447A-9170-CC7F74581CA6}
+		{FAE3E7C1-2F4A-402B-9E05-B9FA425906A1} = {75D434C1-2A60-4FDF-A354-8930D8D83D34}
+		{100D0048-EE60-4265-B2EB-271E83565460} = {75D434C1-2A60-4FDF-A354-8930D8D83D34}
 	EndGlobalSection
 EndGlobal
