@@ -40,11 +40,11 @@ namespace IDPJobManager.Jobs
         }
     }
 
-    public class HelloJob4 : IJob
+    public class HelloJob4 : DependableJob
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob4));
 
-        public void Execute(IJobExecutionContext context)
+        public override void DoExecute(IJobExecutionContext context)
         {
             logger.Info($"[HelloJob4]{DateTime.Now.ToString()}");
         }

@@ -314,5 +314,25 @@ namespace IDPJobManager.Core.Extensions
                 return false;
             }
         }
+
+        public static List<PerformanceTrend> GetPerformanceTrend()
+        {
+            using (var dataContext = new IDPJobManagerDataContext())
+            {
+                var sql = @"WITH CTE 
+                              AS (
+                              SELECT CONVERT(NVARCHAR(10),StartTime) Date,JobName+'|'+JobGroup Job,SUM(DATEDIFF(MS,StartTime,EndTime)) ElapsedTime 
+                                FROM [dbo].[T_JobPerformance] 
+                            GROUP BY CONVERT(NVARCHAR(10),StartTime),JobName,JobGroup)
+                              SELECT * FROM CTE ";
+                return dataContext.Database.SqlQuery<PerformanceTrend>(sql).ToList();
+            }
+        }
+    }
+    public class PerformanceTrend
+    {
+        public string Date { get; set; }
+        public string Job { get; set; }
+        public int ElapsedTime { get; set; }
     }
 }
