@@ -138,6 +138,7 @@
     <Compile Include="Utils\DbHelper.cs" />
     <Compile Include="Utils\Ensure.cs" />
     <Compile Include="Utils\Logger.cs" />
+    <Compile Include="Utils\EmailHelper.cs" />
     <Compile Include="Utils\NativeWindowApiUtil.cs" />
     <Compile Include="Extensions\TypeExtension.cs" />
     <Compile Include="ViewProjections\Job\AllJobsViewProjection.cs" />

@@ -47,6 +47,7 @@ namespace IDPJobManager.Jobs
         public override void DoExecute(IJobExecutionContext context)
         {
             logger.Info($"[HelloJob4]{DateTime.Now.ToString()}");
+            //throw new InvalidCastException("`HelloJob4` raises some errors");
         }
     }
 
