@@ -28,15 +28,7 @@ namespace IDPJobManager.Core
             }
             catch (Exception e)
             {
-                EmailHelper emailHelper = new EmailHelper();
-                emailHelper.From = "949908998@qq.com";
-                emailHelper.To = new string[] { "chenjinliang3@huawei.com" };
-                emailHelper.Subject = $"{this.GetType().FullName} error";
-                emailHelper.Body = e.Message;
-                emailHelper.FromEmailPassword = "edvgeqwasswhbefi";//Here input authorization code after openning POP3/SMTP service when QQ mail
-                emailHelper.Host = "smtp.qq.com";
-                emailHelper.Port = 25;
-                emailHelper.Send();
+                //Send mail?
             }
         }
     }
