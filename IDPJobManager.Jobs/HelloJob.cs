@@ -1,6 +1,5 @@
 ﻿using IDPJobManager.Core;
 using log4net;
-using Quartz;
 using System;
 
 namespace IDPJobManager.Jobs
@@ -9,32 +8,27 @@ namespace IDPJobManager.Jobs
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob));
 
-        //public void Execute(IJobExecutionContext context)
-        //{
-        //    logger.Info($"[HelloJob]{DateTime.Now.ToString()}");
-        //}
-
-        public override void DoExecute(IJobExecutionContext context)
+        public override void DoExecute(JobExecutionContext context)
         {
             logger.Info($"[HelloJob]{DateTime.Now.ToString()}");
         }
     }
 
-    public class HelloJob2 : IJob
+    public class HelloJob2 : BaseJob
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob2));
 
-        public void Execute(IJobExecutionContext context)
+        public override void Execute(JobExecutionContext context)
         {
             logger.Info($"[HelloJob2]{DateTime.Now.ToString()}");
         }
     }
 
-    public class HelloJob3 : IJob
+    public class HelloJob3 : BaseJob
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob3));
 
-        public void Execute(IJobExecutionContext context)
+        public override void Execute(JobExecutionContext context)
         {
             logger.Info($"[HelloJob3]{DateTime.Now.ToString()}");
         }
@@ -44,78 +38,78 @@ namespace IDPJobManager.Jobs
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob4));
 
-        public override void DoExecute(IJobExecutionContext context)
+        public override void DoExecute(JobExecutionContext context)
         {
             logger.Info($"[HelloJob4]{DateTime.Now.ToString()}");
             //throw new InvalidCastException("`HelloJob4` raises some errors");
         }
     }
 
-    public class HelloJob5 : IJob
+    public class HelloJob5 : BaseJob
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob5));
 
-        public void Execute(IJobExecutionContext context)
+        public override void Execute(JobExecutionContext context)
         {
             logger.Info($"[HelloJob5]{DateTime.Now.ToString()}");
         }
     }
 
-    public class HelloJob6 : IJob
+    public class HelloJob6 : BaseJob
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob6));
 
-        public void Execute(IJobExecutionContext context)
+        public override void Execute(JobExecutionContext context)
         {
             logger.Info($"[HelloJob6]{DateTime.Now.ToString()}");
         }
     }
 
-    public class HelloJob7 : IJob
+    public class HelloJob7 : BaseJob
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob7));
 
-        public void Execute(IJobExecutionContext context)
+        public override void Execute(JobExecutionContext context)
         {
             logger.Info($"[HelloJob7]{DateTime.Now.ToString()}");
         }
     }
 
-    public class HelloJob8 : IJob
+    public class HelloJob8 : BaseJob
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob8));
 
-        public void Execute(IJobExecutionContext context)
+        public override void Execute(JobExecutionContext context)
         {
             logger.Info($"[HelloJob8]{DateTime.Now.ToString()}");
         }
     }
 
-    public class HelloJob9 : IJob
+    public class HelloJob9 : BaseJob
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob9));
 
-        public void Execute(IJobExecutionContext context)
+        public override void Execute(JobExecutionContext context)
         {
             logger.Info($"[HelloJob9]{DateTime.Now.ToString()}");
         }
     }
 
-    public class HelloJob10 : IJob
+    public class HelloJob10 : BaseJob
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob10));
 
-        public void Execute(IJobExecutionContext context)
+        public override void Execute(JobExecutionContext context)
         {
-            logger.Info($"[HelloJob10]{DateTime.Now.ToString()}");
+            logger.Info($"[HelloJob10123]{DateTime.Now.ToString()}");
         }
     }
 
-    public class HelloJob11 : IJob
+    public class HelloJob11 : BaseJob
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(HelloJob11));
 
-        public void Execute(IJobExecutionContext context)
+        public override void Execute(JobExecutionContext context)
         {
             logger.Info($"[HelloJob11]{DateTime.Now.ToString()}");
         }

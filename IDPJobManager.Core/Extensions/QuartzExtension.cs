@@ -1,4 +1,5 @@
 ﻿using IDPJobManager.Core.Domain;
+using IDPJobManager.Core.SchedulerProviders;
 using IDPJobManager.Core.Utils;
 using Quartz;
 using System;
@@ -29,44 +30,30 @@ namespace IDPJobManager.Core.Extensions
         public static bool ScheduleJob(this IScheduler scheduler, JobInfo jobInfo)
         {
             Ensure.Requires<ArgumentNullException>(scheduler != null, "sheduler should not be null.");
+            Ensure.Requires<ArgumentNullException>(jobInfo != null, "jobInfo should not be null.");
 
             try
             {
-                var jobName = jobInfo.JobName;
                 var jobGroup = string.IsNullOrWhiteSpace(jobInfo.JobGroup) ? null : jobInfo.JobGroup;
-                var jobKey = new JobKey(jobName, jobGroup);
+                var jobKey = new JobKey(jobInfo.JobName, jobGroup);
                 if (!scheduler.CheckExists(jobKey))
                 {
-                    var assemblyScanner = new AssemblyScanner(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Jobs"));
-                    var jobType = assemblyScanner.GetType(jobInfo.AssemblyName, jobInfo.ClassName);
-                    if (!jobType.Is<IJob>())
+                    var appDomain = default(AppDomain);
+                    var dllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Jobs", jobInfo.AssemblyName, $"{jobInfo.AssemblyName}.dll");
+                    var job = AppDomainLoader<BaseJob>.Load(dllPath, jobInfo.ClassName, out appDomain);
+                    return JobPoolManager.Instance.Add(jobInfo.ID, new JobRuntimeInfo
                     {
-                        Logger.Instance.ErrorFormat("Class `{0},{1}` does not implement the IJob interface.");
-                        return false;
-                    }
-
-                    //Builds the job detail
-                    var jobDetail = JobBuilder.Create(jobType)
-                        .WithIdentity(jobKey)
-                        .Build();
-
-                    //Builds the job trigger
-                    var jobTriggerBuilder = TriggerBuilder.Create()
-                        .WithIdentity($"{jobName}Trigger", jobGroup)
-                        .WithDescription($"{jobName} Trigger")
-                        .WithCronSchedule(jobInfo.CronExpression);
-                    if (jobInfo.StartTime.HasValue)
-                        jobTriggerBuilder.StartAt(jobInfo.StartTime.Value);
-                    if (jobInfo.EndTime.HasValue)
-                        jobTriggerBuilder.EndAt(jobInfo.EndTime.Value);
-                    var jobTrigger = jobTriggerBuilder.Build();
-
-                    //Decides whether to schedule the job by status
-                    scheduler.ScheduleJob(jobDetail, jobTrigger);
-                    if (jobInfo.Status == 0) scheduler.PauseJob(jobInfo);
+                        AppDomain = appDomain,
+                        Job = job,
+                        JobModel = jobInfo
+                    });
                 }
                 else
                 {
+                    CronExpression ce = new CronExpression(jobInfo.CronExpression);
+                    var utcNow = DateTime.UtcNow;
+                    var offset = ce.GetTimeAfter(utcNow);
+                    Console.WriteLine($"{jobInfo.JobName}:{offset},{utcNow}");
                     if (jobInfo.Status == 1) scheduler.ResumeJob(jobKey);
                 }
                 return true;
@@ -166,10 +153,36 @@ namespace IDPJobManager.Core.Extensions
             return true;
         }
 
+        public static TriggerBuilder WithCronPauseAwareCronSchedule(this TriggerBuilder triggerBuilder, string cronExpression)
+        {
+            PauseAwareCronScheduleBuilder scheduleBuilder = PauseAwareCronScheduleBuilder.CronSchedule(cronExpression);
+            return triggerBuilder.WithSchedule(scheduleBuilder);
+        }
+
+        public static TriggerBuilder WithCronPauseAwareCronSchedule(this TriggerBuilder triggerBuilder, string cronExpression, Action<PauseAwareCronScheduleBuilder> action)
+        {
+            PauseAwareCronScheduleBuilder cronScheduleBuilder = PauseAwareCronScheduleBuilder.CronSchedule(cronExpression);
+            action(cronScheduleBuilder);
+            return triggerBuilder.WithSchedule(cronScheduleBuilder);
+        }
+
+        
     }
 
     public class JobOperator
     {
+        public static List<JobInfo> GetJobInfoList(string assemblyName)
+        {
+            Ensure.Requires<ArgumentNullException>(!string.IsNullOrEmpty(assemblyName), "assemblyName should not be null.");
+
+            using (var dataContext = new IDPJobManagerDataContext())
+            {
+                return (from j in dataContext.T_Job
+                        where j.IsDelete == 0 && j.AssemblyName == assemblyName
+                        select j).ToList();
+            }
+        }
+
         public static async Task<List<JobInfo>> GetJobInfoListAsync()
         {
             using (var dataContext = new IDPJobManagerDataContext())
@@ -180,7 +193,36 @@ namespace IDPJobManager.Core.Extensions
             }
         }
 
-        public static async Task<bool> UpdateJobAsync(Guid id, int status)
+        public static bool UpdateJobStatus(Guid id, int status)
+        {
+            using (var dataContext = new IDPJobManagerDataContext())
+            {
+                var jobInfoList = dataContext.Set<JobInfo>();
+                var jobInfo = jobInfoList.FirstOrDefault(j => j.ID == id);
+                if (jobInfo != null)
+                {
+                    jobInfo.Status = status;
+                    dataContext.SaveChanges();
+                }
+                return true;
+            }
+        }
+
+        public static bool UpdateAllJobsStatus(int status)
+        {
+            using (var dataContext = new IDPJobManagerDataContext())
+            {
+                var jobInfoList = dataContext.Set<JobInfo>();
+                foreach (var jobInfo in jobInfoList)
+                {
+                    jobInfo.Status = status;
+                }
+                dataContext.SaveChanges();
+                return true;
+            }
+        }
+
+        public static async Task<bool> UpdateJobStatusAsync(Guid id, int status)
         {
             using (var dataContext = new IDPJobManagerDataContext())
             {
@@ -264,6 +306,7 @@ namespace IDPJobManager.Core.Extensions
 
         public static List<JobInfo> GetDependentJobInfoList(string jobName, string jobGroup)
         {
+            var name = Config.GlobalConfiguration.Name;
             using (var dataContext = new IDPJobManagerDataContext())
             {
                 var jobInfo = dataContext.T_Job.FirstOrDefault(j => j.JobName == jobName && j.JobGroup == jobGroup);

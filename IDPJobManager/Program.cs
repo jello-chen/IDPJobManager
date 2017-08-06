@@ -1,12 +1,11 @@
 ﻿using System;
-using Quartz.Impl;
+using System.Linq;
 using IDPJobManager.Web;
-using Quartz;
-using System.Configuration;
 using Topshelf;
 using IDPJobManager.Core.Extensions;
-using IDPJobManager.Core.SchedulerProviders;
-using Quartz.Impl.Matchers;
+using IDPJobManager.Core;
+using System.IO;
+using IDPJobManager.Core.Config;
 
 namespace IDPJobManager
 {
@@ -16,7 +15,7 @@ namespace IDPJobManager
         {
             return (int)HostFactory.Run(x =>
             {
-                ConfigureDBConnectionString();
+                GlobalConfiguration.ConfigureDBConnectionString();
 
                 x.UseLog4Net("log4net.config");
 
@@ -24,9 +23,20 @@ namespace IDPJobManager
 
                 x.EnablePauseAndContinue();
 
-                var scheduler = CreateScheduler();
+                var scheduler = JobPoolManager.Scheduler;
 
-                using (IDPJobManagerStarter.Configure.UsingScheduler(scheduler)
+                using (IDPJobManagerStarter.Configure
+                        .UsingScheduler(scheduler)
+                        .UsingJobWatcher(new JobWatcher("Jobs", cl =>
+                        {
+                            var assemblyNames = cl.Select(c => Path.GetFileNameWithoutExtension(c)).ToList();
+                            foreach (var assemblyName in assemblyNames)
+                            {
+                                var jobInfos = JobOperator.GetJobInfoList(assemblyName);
+                                JobPoolManager.Instance.RemoveAll(jobInfos.Select(t => t.ID).ToList());
+                                jobInfos.ForEach(jobInfo => scheduler.ScheduleJob(jobInfo));
+                            }
+                        }))
                         .HostedOnDefault()
                         .Start())
                 {
@@ -36,24 +46,6 @@ namespace IDPJobManager
                     Console.Read();
                 }
             });
-        }
-
-        static void ConfigureDBConnectionString()
-        {
-            var connectionString = ConfigurationManager.ConnectionStrings["IDP-JobManager"];
-            if (connectionString == null)
-                throw new InvalidOperationException("Not configure `IDP-JobManager` connection string.");
-            Core.Config.GlobalConfiguration.Name = "IDP-JobManager";
-            Core.Config.GlobalConfiguration.ConnectionString = connectionString.ConnectionString;
-            Core.Config.GlobalConfiguration.ProviderName = connectionString.ProviderName;
-        }
-
-        static IScheduler CreateScheduler()
-        {
-            var schedulerFactory = new StdSchedulerFactory();
-            var scheduler = schedulerFactory.GetScheduler();
-            scheduler.ListenerManager.AddTriggerListener(new DefaultTriggerListener(), GroupMatcher<TriggerKey>.AnyGroup());
-            return scheduler;
         }
     }
 }

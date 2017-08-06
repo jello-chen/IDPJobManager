@@ -1,5 +1,4 @@
 ﻿using System;
-using Quartz;
 using IDPJobManager.Core.Utils;
 
 namespace IDPJobManager.Core.Job
@@ -14,7 +13,7 @@ namespace IDPJobManager.Core.Job
             this.jobs = jobs;
         }
 
-        public override bool BeforeExecute(IJobExecutionContext context)
+        public override bool BeforeExecute(JobExecutionContext context)
         {
             var beExecuted = true;
             foreach (var job in jobs)

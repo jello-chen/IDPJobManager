@@ -1,11 +1,9 @@
 ﻿using IDPJobManager.Core.Domain;
 using IDPJobManager.Core.Extensions;
-using IDPJobManager.Core.Utils;
-using Quartz;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace IDPJobManager.Core
 {
@@ -13,19 +11,15 @@ namespace IDPJobManager.Core
     {
         public static void Execute(IEnumerable<JobInfo> jobInfos)
         {
-            foreach (var jobInfo in jobInfos)
-            {
-                Execute(jobInfo);
-            }
+            Task.WaitAll(jobInfos.Select(j => Task.Run(() => Execute(j))).ToArray());
         }
 
         public static void Execute(JobInfo jobInfo)
         {
-            var assemblyScanner = new AssemblyScanner(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Jobs"));
-            var jobType = assemblyScanner.GetType(jobInfo.AssemblyName, jobInfo.ClassName);
-            if (jobType.Is<IJob>())
+            var jobType = Type.GetType($"{jobInfo.ClassName},{jobInfo.AssemblyName}", true, true);
+            if (jobType.Is<BaseJob>())
             {
-                var job = (IJob)Activator.CreateInstance(jobType);
+                var job = (BaseJob)Activator.CreateInstance(jobType);
                 Task.Run(() => job.Execute(null)).Wait();
             }
         }

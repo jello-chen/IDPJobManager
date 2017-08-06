@@ -17,23 +17,22 @@ namespace IDPJobManager.Core
             _stopwatch = new Stopwatch();
         }
 
-        public override bool BeforeExecute(IJobExecutionContext context)
+        public override bool BeforeExecute(JobExecutionContext context)
         {
             _stopwatch.Restart();
             _startTime = DateTime.Now;
             return true;
         }
 
-        public override void AfterExecute(IJobExecutionContext context)
+        public override void AfterExecute(JobExecutionContext context)
         {
             _stopwatch.Stop();
             Logger.Instance.InfoFormat("Execute `{0}` elapsed time:{1} ms.", GetType().FullName, _stopwatch.ElapsedMilliseconds);
-            var jobKey = context.JobDetail.Key;
             JobOperator.AddJobPerformance(new JobPerformance
             {
                 ID = Guid.NewGuid(),
-                JobName = jobKey.Name,
-                JobGroup = jobKey.Group,
+                JobName = context.JobName,
+                JobGroup = context.JobGroup,
                 StartTime = _startTime,
                 EndTime = DateTime.Now,
                 CPU = (decimal)AppDomain.CurrentDomain.MonitoringTotalProcessorTime.TotalSeconds,

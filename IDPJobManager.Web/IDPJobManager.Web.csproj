@@ -99,7 +99,6 @@
     <Compile Include="Features\CommandInvokerFactory.cs" />
     <Compile Include="Features\NancyCompressionExtenstion.cs" />
     <Compile Include="Features\ViewProjectionFactory.cs" />
-    <Compile Include="Models\JobModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Modules\AccountModule.cs" />
     <Compile Include="Modules\ApiModule.cs" />

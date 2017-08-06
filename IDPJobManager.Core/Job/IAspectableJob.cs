@@ -1,10 +1,8 @@
-﻿using Quartz;
-
-namespace IDPJobManager.Core
+﻿namespace IDPJobManager.Core
 {
-    public interface IAspectableJob : IJob
+    public interface IAspectableJob
     {
-        bool BeforeExecute(IJobExecutionContext context);
-        void AfterExecute(IJobExecutionContext context);
+        bool BeforeExecute(JobExecutionContext context);
+        void AfterExecute(JobExecutionContext context);
     }
 }
