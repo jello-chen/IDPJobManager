@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Script", "Script", "{100D00
 		IDP-JobManager.sql = IDP-JobManager.sql
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nancy.Owin", "Nancy.Owin\Nancy.Owin.csproj", "{179BFF6D-4A5A-4489-B23D-2596C8DB3190}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{E88EF622-49AA-4BC9-B56E-20989BD3468C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E88EF622-49AA-4BC9-B56E-20989BD3468C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E88EF622-49AA-4BC9-B56E-20989BD3468C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{179BFF6D-4A5A-4489-B23D-2596C8DB3190}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{179BFF6D-4A5A-4489-B23D-2596C8DB3190}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{179BFF6D-4A5A-4489-B23D-2596C8DB3190}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{179BFF6D-4A5A-4489-B23D-2596C8DB3190}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,5 +86,6 @@ Global
 		{E88EF622-49AA-4BC9-B56E-20989BD3468C} = {6655AFD1-AD78-447A-9170-CC7F74581CA6}
 		{FAE3E7C1-2F4A-402B-9E05-B9FA425906A1} = {75D434C1-2A60-4FDF-A354-8930D8D83D34}
 		{100D0048-EE60-4265-B2EB-271E83565460} = {75D434C1-2A60-4FDF-A354-8930D8D83D34}
+		{179BFF6D-4A5A-4489-B23D-2596C8DB3190} = {6655AFD1-AD78-447A-9170-CC7F74581CA6}
 	EndGlobalSection
 EndGlobal

@@ -2,17 +2,13 @@
 var d = {
     JobName: '',
     JobGroup: '',
-    StartDate: '',
-    EndDate: '',
     colHeaders: [
         { name: 'JobName', index: 'JobName', label: 'Job Name', sortable: true },
         { name: 'JobGroup', index: 'JobGroup', label: 'Job Group', sortable: true },
         { name: 'Status', index: 'Status', label: 'Status' },
         { name: 'AssemblyName', index: 'AssemblyName', label: 'Assembly Name' },
         { name: 'ClassName', index: 'ClassName', label: 'Class Name' },
-        { name: 'CronExpression', index: 'CronExpression', label: 'Cron Expression' },
-        { name: 'StartTime', index: 'StartTime', label: 'Start Time' },
-        { name: 'EndTime', index: 'EndTime', label: 'End Time' }
+        { name: 'CronExpression', index: 'CronExpression', label: 'Cron Expression' }
     ],
     sortKey: '',
     sortOrders: {},
@@ -34,9 +30,7 @@ var d = {
         JobGroup: '',
         AssemblyName: '',
         ClassName: '',
-        CronExpression: '',
-        StartTimeString: '',
-        EndTimeString: ''
+        CronExpression: ''
     },
     valid: false,
     validation: {
@@ -57,8 +51,6 @@ var options = {
 var vm = new Vue({
     el: '#container',
     mounted: function () {
-        this.initDateTimePicker();
-        this.initEditDateTimePicker();
         this.searchJobs();
     },
     data: function () {
@@ -71,45 +63,6 @@ var vm = new Vue({
         return d;
     },
     methods: {
-        initDateTimePicker: function () {
-            var that = this;
-            $('#dtStart').datetimepicker({
-                format: 'YYYY-MM-DD'
-            });
-
-            $('#dtEnd').datetimepicker({
-                format: 'YYYY-MM-DD',
-                useCurrent: false //Important! See issue #1075
-            });
-
-            $("#dtStart").on("dp.change", function (e) {
-                that.StartDate = $('input', $('#dtStart')).val();
-                $('#dtEnd').data("DateTimePicker").minDate(e.date);
-            });
-
-            $("#dtEnd").on("dp.change", function (e) {
-                that.EndDate = $('input', $('#dtEnd')).val();
-                $('#dtStart').data("DateTimePicker").maxDate(e.date);
-            });
-        },
-        initEditDateTimePicker: function () {
-            var that = this;
-            $('#dtModelStartTime').datetimepicker({
-                format: 'YYYY-MM-DD'
-            });
-            $('#dtModelEndTime').datetimepicker({
-                format: 'YYYY-MM-DD',
-                useCurrent: false //Important! See issue #1075
-            });
-            $("#dtModelStartTime").on("dp.change", function (e) {
-                that.Model.StartTimeString = $('input', $('#dtModelStartTime')).val();
-                $('#dtModelEndTime').data("DateTimePicker").minDate(e.date);
-            });
-            $("#dtModelEndTime").on("dp.change", function (e) {
-                that.Model.EndTimeString = $('input', $('#dtModelEndTime')).val();
-                $('#dtModelStartTime').data("DateTimePicker").maxDate(e.date);
-            });
-        },
         beRequired: function (field) {
             var tip = this.Model[field] ? '' : field + ' is required.';
             this.$set(this.validation, field, tip);
@@ -161,9 +114,7 @@ var vm = new Vue({
                 SortKey: this.sortKey,
                 SortType: this.sortType,
                 JobName: this.JobName,
-                JobGroup: this.JobGroup,
-                StartDate: this.StartDate,
-                EndDate: this.EndDate
+                JobGroup: this.JobGroup
             }
         },
         searchJobs: function (event) {
@@ -268,8 +219,6 @@ var vm = new Vue({
                 this.Model.AssemblyName = '';
                 this.Model.ClassName = '';
                 this.Model.CronExpression = '';
-                this.Model.StartTimeString = '';
-                this.Model.EndTimeString = '';
                 this.Model.Status = '0';
                 this.validation.JobName = null;
                 this.validation.AssemblyName = null;
@@ -393,9 +342,6 @@ var vm = new Vue({
                     this.validate();
                 }
             }
-        },
-        StartDate: function (val, oldVal) {
-
         }
     }
 });

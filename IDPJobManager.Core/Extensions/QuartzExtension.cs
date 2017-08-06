@@ -78,6 +78,19 @@ namespace IDPJobManager.Core.Extensions
             return result;
         }
 
+        public static bool ScheduleJobs(this IScheduler scheduler, List<JobInfo> jobInfoList = null)
+        {
+            Ensure.Requires<ArgumentNullException>(scheduler != null, "sheduler should not be null.");
+            if (jobInfoList == null)
+                jobInfoList = JobOperator.GetJobInfoList();
+            var result = false;
+            foreach (var jobInfo in jobInfoList)
+            {
+                result |= ScheduleJob(scheduler, jobInfo);
+            }
+            return result;
+        }
+
         public static bool UnscheduleJob(this IScheduler scheduler, JobInfo jobInfo)
         {
             Ensure.Requires<ArgumentNullException>(scheduler != null, "sheduler should not be null.");
@@ -180,6 +193,16 @@ namespace IDPJobManager.Core.Extensions
                 return (from j in dataContext.T_Job
                         where j.IsDelete == 0 && j.AssemblyName == assemblyName
                         select j).ToList();
+            }
+        }
+
+        public static List<JobInfo> GetJobInfoList()
+        {
+            using (var dataContext = new IDPJobManagerDataContext())
+            {
+                return (from j in dataContext.T_Job
+                       where j.IsDelete == 0
+                      select j).ToList();
             }
         }
 

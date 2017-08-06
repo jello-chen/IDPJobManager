@@ -18,39 +18,19 @@
     </style>
 }
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-5">
         <label class="col-md-4 control-label" for="ds_host">Job Name</label>
         <div class="col-md-8">
             <input class="form-control" id="ds_host" type="text" placeholder="Please input job name" v-model="JobName" />
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-5">
         <label class="col-md-4 control-label" for="ds_host">Job Group</label>
         <div class="col-md-8">
             <input class="form-control" id="ds_host" type="text" placeholder="Please input job group" v-model="JobGroup" />
         </div>
     </div>
-    <div class="col-md-5">
-        <label class="col-md-1 control-label" for="dtStart">Create Time</label>
-        <div class="col-md-5">
-            <div class='input-group date form_dateperiod' id='dtStart'>
-                <input type='text' class="form-control" v-model="StartDate" />
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                </span>
-            </div>
-        </div>
-        <label class="col-md-1 control-label" style="width:10px;">-</label>
-        <div class="col-md-5">
-            <div class='input-group date form_dateperiod' id='dtEnd'>
-                <input type='text' class="form-control" v-model="EndDate" />
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                </span>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-1">
+    <div class="col-md-2">
         <button class="btn btn-primary" id="btn_search" v-on:click="searchJobs($event)">Search</button>
     </div>
 </div>
@@ -83,8 +63,6 @@
                         <td>{{item.AssemblyName}}</td>
                         <td>{{item.ClassName}}</td>
                         <td>{{item.CronExpression}}</td>
-                        <td>{{item.StartTimeString}}</td>
-                        <td>{{item.EndTimeString}}</td>
                         <td>
                             <a v-show="item.Status == 0" href="javascript:void(0)" v-on:click="startJob(item.ID,index,$event)" title="Start"><i class="glyphicon glyphicon-play"></i></a>
                             <a v-show="item.Status == 1" href="javascript:void(0)" v-on:click="stopJob(item.ID,index,$event)" title="Stop"><i class="glyphicon glyphicon-stop"></i></a>
@@ -142,28 +120,6 @@
                     <input class="form-control" type="text" v-model="Model.CronExpression" v-on:input="beRequired('CronExpression')" v-on:blur="beRequired('CronExpression')"/>
                 </div>
                 <span class="tip">{{validation.CronExpression}}</span>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-md-4">Start Time</label>
-                <div class="col-md-6">
-                    <div class="input-group date form_dateperiod" id="dtModelStartTime">
-                        <input type=text class="form-control" v-model="Model.StartTimeString" />
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-md-4">End Time</label>
-                <div class="col-md-6">
-                    <div class="input-group date form_dateperiod" id="dtModelEndTime">
-                        <input type=text class="form-control" v-model="Model.EndTimeString" />
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

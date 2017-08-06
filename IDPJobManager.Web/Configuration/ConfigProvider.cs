@@ -14,8 +14,6 @@
 
         ConfigProvider(Quartz.IScheduler scheduler)
         {
-            var baseUri = new Uri(AppDomain.CurrentDomain.BaseDirectory);
-
             provider = IDPJobManagerConfiguration.Config.Provider;
 
             schedulerProvider = new StdSchedulerProvider(scheduler)

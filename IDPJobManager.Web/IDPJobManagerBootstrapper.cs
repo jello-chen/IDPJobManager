@@ -7,7 +7,6 @@
     using Nancy.ViewEngines;
     using Nancy;
     using Nancy.Authentication.Basic;
-    using Nancy.Hosting.Self;
     using Nancy.Session;
     using Nancy.Conventions;
     using Swagger.ObjectModel;
@@ -35,9 +34,7 @@
 
         public IDPJobManagerBootstrapper(IScheduler scheduler)
         {
-            if (scheduler == null)
-                throw new ArgumentNullException("scheduler");
-            _scheduler = scheduler;
+            _scheduler = scheduler ?? throw new ArgumentNullException("scheduler");
         }
 
         protected override void ConfigureApplicationContainer(TinyIoCContainer container)

@@ -7,7 +7,7 @@
 
     public abstract class BaseModule : NancyModule
     {
-        private static readonly dynamic AuthInfo = ConfigProvider.GetInstance(IDPJobManagerStarter.Scheduler).AuthenticationInfo;
+        private static readonly dynamic AuthInfo = ConfigProvider.GetInstance(Core.JobPoolManager.Scheduler).AuthenticationInfo;
 
         protected BaseModule()
             : this(string.Empty)

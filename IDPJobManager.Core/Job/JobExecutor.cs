@@ -11,6 +11,7 @@ namespace IDPJobManager.Core
     {
         public static void Execute(IEnumerable<JobInfo> jobInfos)
         {
+            if (jobInfos.IsNullOrEmpty()) return;
             Task.WaitAll(jobInfos.Select(j => Task.Run(() => Execute(j))).ToArray());
         }
 

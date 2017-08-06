@@ -10,11 +10,10 @@ namespace IDPJobManager.Core
     {
         private FileSystemWatcher watcher;
         private Timer timer;
-        private bool isStart;
         private List<string> changedJobs = new List<string>();
         private Action<List<string>> onChanged;
 
-        public bool IsStart { get { return isStart; } }
+        public bool IsStart { get; private set; }
 
         public JobWatcher(string jobDirectory, Action<List<string>> onChanged)
         {
@@ -33,10 +32,10 @@ namespace IDPJobManager.Core
 
         public void Start()
         {
-            if (!isStart)
+            if (!IsStart)
             {
                 watcher.EnableRaisingEvents = true;
-                isStart = true;
+                IsStart = true;
             }
         }
 
@@ -75,11 +74,19 @@ namespace IDPJobManager.Core
             timer.Change(5000, -1);
         }
 
+        public void Stop()
+        {
+            if(IsStart)
+            {
+                watcher.EnableRaisingEvents = false;
+                watcher.Dispose();
+                timer.Dispose();
+            }
+        }
+
         public void Dispose()
         {
-            watcher.EnableRaisingEvents = false;
-            watcher.Dispose();
-            timer.Dispose();
+            Stop();
         }
     }
 }

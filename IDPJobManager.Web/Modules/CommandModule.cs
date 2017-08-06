@@ -1,20 +1,13 @@
 ﻿namespace IDPJobManager.Web.Modules
 {
-    using Configuration;
-    using Core;
-    using Core.SchedulerProviders;
     using Nancy;
     using Quartz;
     using Quartz.Impl.Matchers;
+    using IDPJobManager.Core;
 
     public class CommandModule : BaseModule
     {
-        private static readonly IScheduler Scheduler;
-
-        static CommandModule()
-        {
-            Scheduler = IDPJobManagerStarter.Scheduler;
-        }
+        private static readonly IScheduler Scheduler = JobPoolManager.Scheduler;
 
         public CommandModule()
             : base()
