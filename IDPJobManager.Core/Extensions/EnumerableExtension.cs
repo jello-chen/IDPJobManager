@@ -13,7 +13,7 @@ namespace IDPJobManager.Core.Extensions
             if (source == null) return true;
             using (var enumerator = source.GetEnumerator())
             {
-                return enumerator.MoveNext();
+                return !enumerator.MoveNext();
             }
         }
     }

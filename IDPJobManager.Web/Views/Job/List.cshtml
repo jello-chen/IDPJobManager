@@ -15,30 +15,43 @@
         .tip {
             color: #d9534f;
         }
+
+        .v-middle > div > label:first-child {
+            line-height: 34px;
+        }
     </style>
 }
-<div class="row">
+<div class="row v-middle">
     <div class="col-md-5">
         <label class="col-md-4 control-label" for="ds_host">Job Name</label>
         <div class="col-md-8">
-            <input class="form-control" id="ds_host" type="text" placeholder="Please input job name" v-model="JobName" />
+            <input class="form-control" type="text" placeholder="Please input job name" v-model="JobName" />
         </div>
     </div>
     <div class="col-md-5">
         <label class="col-md-4 control-label" for="ds_host">Job Group</label>
         <div class="col-md-8">
-            <input class="form-control" id="ds_host" type="text" placeholder="Please input job group" v-model="JobGroup" />
+            <input class="form-control" type="text" placeholder="Please input job group" v-model="JobGroup" />
         </div>
     </div>
     <div class="col-md-2">
-        <button class="btn btn-primary" id="btn_search" v-on:click="searchJobs($event)">Search</button>
+        <button class="btn btn-primary" v-on:click="searchJobs($event)">Search</button>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
         <div class="app-toolbar">
-            <button class="btn btn-default btn-sm" id="btn_Add" v-on:click="AddJob">
+            <button class="btn btn-default btn-sm" v-on:click="AddJob">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
+            </button>
+            <button class="btn btn-default btn-sm" v-on:click="StartSelectedJob($event)">
+                <span class="glyphicon glyphicon-play" aria-hidden="true"></span> Start
+            </button>
+            <button class="btn btn-default btn-sm" v-on:click="StopSelectedJob($event)">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop
+            </button>
+            <button class="btn btn-default btn-sm" v-on:click="DeleteSelectedJob($event)">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete
             </button>
         </div>
     </div>
@@ -51,12 +64,14 @@
             <table class="table table-bordered table-hover table-responsive table-striped">
                 <thead>
                     <tr>
+                        <th class="text-center"><input type="checkbox" v-model="IsCheckAll"/></th>
                         <th v-for="colHeader in colHeaders" v-on:click="sortBy(colHeader)" class="text-center" :class="{ active: sortKey == colHeader.name }">{{colHeader.label}}<span v-if="changeSortable(colHeader.sortable)" class="arrow" :class="sortOrders[colHeader.name] > 0 ? 'asc' : 'desc'"></span></th>
                         <th class="text-center">Operation</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item,index) in items">
+                        <td><input type="checkbox" v-model="item.Checked"/></td>
                         <td>{{item.JobName}}</td>
                         <td>{{item.JobGroup}}</td>
                         <td><span v-show="item.Status == 1" class="label label-success">Start</span><span v-show="item.Status == 0" class="label label-warning">Stop</span></td>
@@ -90,7 +105,7 @@
             <div class="form-group">
                 <label class="control-label col-md-4">Job Name<span class="required-tip">*</span></label>
                 <div class="col-md-6">
-                    <input class="form-control" type="text" v-model="Model.JobName" v-on:input="beRequired('JobName')" v-on:blur="beRequired('JobName')"/>
+                    <input class="form-control" type="text" v-model="Model.JobName" v-on:input="beRequired('JobName')" v-on:blur="beRequired('JobName')" />
                 </div>
                 <span class="tip">{{validation.JobName}}</span>
             </div>
@@ -103,21 +118,21 @@
             <div class="form-group">
                 <label class="control-label col-md-4">Assembly Name<span class="required-tip">*</span></label>
                 <div class="col-md-6">
-                    <input class="form-control" type="text" v-model="Model.AssemblyName" v-on:input="beRequired('AssemblyName')" v-on:blur="beRequired('AssemblyName')"/>
+                    <input class="form-control" type="text" v-model="Model.AssemblyName" v-on:input="beRequired('AssemblyName')" v-on:blur="beRequired('AssemblyName')" />
                 </div>
                 <span class="tip">{{validation.AssemblyName}}</span>
             </div>
             <div class="form-group">
                 <label class="control-label col-md-4">Class Name<span class="required-tip">*</span></label>
                 <div class="col-md-6">
-                    <input class="form-control" type="text" v-model="Model.ClassName" v-on:input="beRequired('ClassName')" v-on:blur="beRequired('ClassName')"/>
+                    <input class="form-control" type="text" v-model="Model.ClassName" v-on:input="beRequired('ClassName')" v-on:blur="beRequired('ClassName')" />
                 </div>
                 <span class="tip">{{validation.ClassName}}</span>
             </div>
             <div class="form-group">
                 <label class="control-label col-md-4">Cron Expression<span class="required-tip">*</span></label>
                 <div class="col-md-6">
-                    <input class="form-control" type="text" v-model="Model.CronExpression" v-on:input="beRequired('CronExpression')" v-on:blur="beRequired('CronExpression')"/>
+                    <input class="form-control" type="text" v-model="Model.CronExpression" v-on:input="beRequired('CronExpression')" v-on:blur="beRequired('CronExpression')" />
                 </div>
                 <span class="tip">{{validation.CronExpression}}</span>
             </div>

@@ -19,7 +19,7 @@ namespace IDPJobManager.Core.Commands.Job
             using (var dataContext = new IDPJobManagerDataContext())
             {
                 var jobSets = dataContext.Set<JobInfo>();
-                var job = jobSets.FirstOrDefault(j => j.ID == command.ID);
+                var job = jobSets.FirstOrDefault(j => j.ID == command.ID && j.Status == 0);
                 if (job != null)
                 {
                     job.Status = 1;

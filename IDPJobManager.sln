@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDPJobManager.Core.Test", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDPJobManager.Web.Test", "IDPJobManager.Web.Test\IDPJobManager.Web.Test.csproj", "{EF571E18-C988-42CB-B550-C3FEA0F94A5B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{6655AFD1-AD78-447A-9170-CC7F74581CA6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{6655AFD1-AD78-447A-9170-CC7F74581CA6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDPJobManager.Jobs", "IDPJobManager.Jobs\IDPJobManager.Jobs.csproj", "{95EE2DF2-8478-4104-86AA-D4888F657A02}"
 EndProject

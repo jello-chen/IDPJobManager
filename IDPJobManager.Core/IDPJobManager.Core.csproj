@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="CommandResult.cs" />
     <Compile Include="Commands\Account\LoginCommand.cs" />
+    <Compile Include="Commands\Job\BatchOperateCommandInvoker.cs" />
     <Compile Include="Commands\Job\DeleteJobCommandInvoker.cs" />
     <Compile Include="Commands\Job\AddJobCommandInvoker.cs" />
     <Compile Include="Commands\Job\EditJobCommandInvoker.cs" />

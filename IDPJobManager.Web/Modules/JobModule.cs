@@ -27,6 +27,7 @@
             Post["/Start"] = _ => StartJob(this.Bind<StartJobCommand>());
             Post["/Stop"] = _ => StopJob(this.Bind<StopJobCommand>());
             Post["/SaveJobDependency"] = _ => SaveJobDependency(this.Bind<EditJobDependencyCommand>());
+            Post["/BatchOperate"] = _ => BatchOperate(this.Bind<BatchOperateJobCommand>());
         }
 
         private dynamic GetJob()
@@ -83,6 +84,12 @@
         private dynamic SaveJobDependency(EditJobDependencyCommand command)
         {
             var commandResult = commandInvokerFactory.Handle<EditJobDependencyCommand, CommandResult>(command);
+            return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
+        }
+
+        private dynamic BatchOperate(BatchOperateJobCommand command)
+        {
+            var commandResult = commandInvokerFactory.Handle<BatchOperateJobCommand, CommandResult>(command);
             return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
         }
     }

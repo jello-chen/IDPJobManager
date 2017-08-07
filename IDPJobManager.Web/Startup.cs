@@ -10,14 +10,13 @@ namespace IDPJobManager.Web
     {
         public void Configuration(IAppBuilder app)
         {
-
             // File Server
             var fileOptions = new FileServerOptions
             {
                 EnableDirectoryBrowsing = true,
                 FileSystem = new PhysicalFileSystem("Jobs"),
                 StaticFileOptions = { ContentTypeProvider = new JsonContentTypeProvider() },
-                RequestPath = new Microsoft.Owin.PathString("/Logs")
+                RequestPath = new Microsoft.Owin.PathString("/Directory")
             };
             app.UseFileServer(fileOptions);
 

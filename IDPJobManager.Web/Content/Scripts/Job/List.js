@@ -1,5 +1,6 @@
 ﻿
 var d = {
+    IsCheckAll: false,
     JobName: '',
     JobGroup: '',
     colHeaders: [
@@ -102,8 +103,13 @@ var vm = new Vue({
                 type: 'GET',
                 dataType: 'json',
                 success: function (result) {
+                    var vItems = result.Items;
+                    vItems.forEach(function (item) {
+                        item.Checked = false;
+                    });
                     that.items = result.Items;
                     that.totalCount = result.TotalCount;
+                    that.IsCheckAll = false;
                 }
             });
         },
@@ -194,7 +200,6 @@ var vm = new Vue({
                                     });
                                 }
                             }
-
                         });
                     }
                 });
@@ -304,6 +309,127 @@ var vm = new Vue({
                     }
                 }
             }
+        },
+        getSelectedItemIds: function () {
+            var ids = [];
+            this.items.forEach(function (item) {
+                if (item.Checked) {
+                    ids.push(item.ID);
+                }
+            });
+            return ids;
+        },
+        StartSelectedJob: function (event) {
+            var ids = this.getSelectedItemIds();
+            if (ids.length == 0) {
+                BootstrapDialog.alert('Nothing is checked!');
+            }
+            else {
+                var _ids = '';
+                ids.forEach(function (id) {
+                    _ids += id + ',';
+                });
+                _ids = _ids.substr(0, _ids.length - 1);
+                this.$nextTick(() => {
+                    var that = this;
+                    $.ajax({
+                        url: '/Job/BatchOperate/',
+                        data: { "IDS": _ids, "Type": "Start" },
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result && result.success) {
+                                ids.forEach(function (id) {
+                                    for (var i = 0; i < that.items.length; i++) {
+                                        var item = that.items[i];
+                                        if (id == item.ID) {
+                                            item.Status = 1;
+                                            break;
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    event.preventDefault();
+                });
+            }
+        },
+        StopSelectedJob: function (event) {
+            var ids = this.getSelectedItemIds();
+            if (ids.length == 0) {
+                BootstrapDialog.alert('Nothing is checked!');
+            }
+            else {
+                var _ids = '';
+                ids.forEach(function (id) {
+                    _ids += id + ',';
+                });
+                _ids = _ids.substr(0, _ids.length - 1);
+                this.$nextTick(() => {
+                    var that = this;
+                    $.ajax({
+                        url: '/Job/BatchOperate/',
+                        data: { "IDS": _ids, "Type": "Stop" },
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result && result.success) {
+                                ids.forEach(function (id) {
+                                    for (var i = 0; i < that.items.length; i++) {
+                                        var item = that.items[i];
+                                        if (id == item.ID) {
+                                            item.Status = 0;
+                                            break;
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    event.preventDefault();
+                });
+            }
+        },
+        DeleteSelectedJob: function (event) {
+            var ids = this.getSelectedItemIds();
+            if (ids.length == 0) {
+                BootstrapDialog.alert('Nothing is checked!');
+            }
+            else {
+                var that = this;
+                BootstrapDialog.confirm('Are you sure to delete selected job?', function (result) {
+                    if (result) {
+                        var _ids = '';
+                        ids.forEach(function (id) {
+                            _ids += id + ',';
+                        });
+                        _ids = _ids.substr(0, _ids.length - 1);
+                        that.$nextTick(() => {
+                            $.ajax({
+                                url: '/Job/BatchOperate/',
+                                data: { "IDS": _ids, "Type": "Delete" },
+                                type: 'POST',
+                                dataType: 'json',
+                                success: function (result) {
+                                    if (result) {
+                                        if (result.success === true) {
+                                            that.searchJobs();
+                                        }
+                                        else {
+                                            BootstrapDialog.show({
+                                                title: 'Delete Job Error',
+                                                message: result.message.toString()
+                                            });
+                                        }
+                                    }
+                                }
+                            });
+                            event.preventDefault();
+                        });
+                    }
+                });
+            }
         }
     },
     computed: {
@@ -342,6 +468,11 @@ var vm = new Vue({
                     this.validate();
                 }
             }
+        },
+        IsCheckAll: function (val, oldVal) {
+            this.items.forEach(function (item) {
+                item.Checked = val;
+            });
         }
     }
 });
