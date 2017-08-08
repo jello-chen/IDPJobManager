@@ -109,7 +109,7 @@
     <Compile Include="Authentication\IDPJobManagerUserValidator.cs" />
     <Compile Include="Configuration\RazorConfiguration.cs" />
     <Compile Include="ErrorHandling\NotFoundHandler.cs" />
-    <Compile Include="Extensions\JsonContentTypeProvider.cs" />
+    <Compile Include="Extensions\ContentTypeProvider.cs" />
     <Compile Include="Features\CommandInvokerFactory.cs" />
     <Compile Include="Features\NancyCompressionExtenstion.cs" />
     <Compile Include="Features\ViewProjectionFactory.cs" />
@@ -132,6 +132,15 @@
     <Compile Include="WebServer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Images\loading-sm.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Images\loading.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Scripts\fileinput.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Scripts\Home\Index.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -142,6 +151,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Scripts\vue-form.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Styles\fileinput.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Styles\vue-bootstrap-modal.css">
@@ -250,12 +262,6 @@
     <Content Include="Content\Scripts\html5shiv.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Scripts\jqgrid\i18n\grid.locale-cn.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Scripts\jqgrid\jquery.jqGrid.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\Scripts\jquery.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -334,9 +340,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Styles\jqgrid\ui.jqgrid.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <EmbeddedResource Include="ErrorHandling\Resources\404.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -6,6 +6,7 @@
 @section Style{
     <link href="~/Content/Styles/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen" />
     <link href="~/Content/Styles/vue-bootstrap-modal.css" rel="stylesheet" />
+    <link href="~/Content/Styles/fileinput.min.css" rel="stylesheet" />
     <style type="text/css">
         .required-tip {
             color: red;
@@ -53,6 +54,9 @@
             <button class="btn btn-default btn-sm" v-on:click="DeleteSelectedJob($event)">
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete
             </button>
+            <button class="btn btn-default btn-sm" v-on:click="showUploader = true">
+                <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Upload
+            </button>
         </div>
     </div>
 </div>
@@ -64,14 +68,14 @@
             <table class="table table-bordered table-hover table-responsive table-striped">
                 <thead>
                     <tr>
-                        <th class="text-center"><input type="checkbox" v-model="IsCheckAll"/></th>
+                        <th class="text-center"><input type="checkbox" v-model="IsCheckAll" /></th>
                         <th v-for="colHeader in colHeaders" v-on:click="sortBy(colHeader)" class="text-center" :class="{ active: sortKey == colHeader.name }">{{colHeader.label}}<span v-if="changeSortable(colHeader.sortable)" class="arrow" :class="sortOrders[colHeader.name] > 0 ? 'asc' : 'desc'"></span></th>
                         <th class="text-center">Operation</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item,index) in items">
-                        <td><input type="checkbox" v-model="item.Checked"/></td>
+                        <td><input type="checkbox" v-model="item.Checked" /></td>
                         <td>{{item.JobName}}</td>
                         <td>{{item.JobGroup}}</td>
                         <td><span v-show="item.Status == 1" class="label label-success">Start</span><span v-show="item.Status == 0" class="label label-warning">Stop</span></td>
@@ -97,7 +101,7 @@
     </div>
     <!-- /.col-lg-12 -->
 </div>
-<!--custom content-->
+<!-- /.row -->
 <vb-modal v-show="showAddOrEditModel" v-on:close="showAddOrEditModel = false" style="display:none;">
     <h3 slot="header">{{Model.ID != '' ? 'Edit' : 'Add'}}</h3>
     <div id="divEdit" slot="body">
@@ -143,7 +147,7 @@
         <button type="button" class="btn btn-primary" :class="{'disabled' : beforeFirstValidation || !valid}" v-on:click="SaveJob($event)">Save</button>
     </span>
 </vb-modal>
-<!-- /Edit -->
+<!-- /.Edit -->
 <vb-modal v-show="showConfigModel" v-on:close="showConfigModel = false" style="display:none;">
     <h3 slot="header">Dependency Configuration</h3>
     <div slot="body">
@@ -174,10 +178,32 @@
     </span>
 </vb-modal>
 
+<vb-modal v-show="showUploader" v-on:close="showUploader = false" style="display:none;">
+    <h3 slot="header">Uploader</h3>
+    <div slot="body">
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <div class="form-group">
+                    <label class="control-label">Select File</label>
+                    <input id="job-uploader" type="file" class="file-loading" multiple data-show-preview="false">
+                </div>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+    <span slot="footer">
+        <button type="button" class="btn btn-default" v-on:click="showUploader = false">Cancel</button>
+        <button type="button" class="btn btn-primary" v-on:click="SaveJob($event)">Save</button>
+    </span>
+</vb-modal>
+<!-- /.Edit -->
+
 @section Scripts{
     <script src="~/Content/Scripts/moment-with-locales.js"></script>
     <script src="~/Content/Scripts/bootstrap-datetimepicker.min.js"></script>
     <script src="~/Content/Scripts/vue-bootstrap-pager.js"></script>
     <script src="~/Content/Scripts/vue-bootstrap-modal.js"></script>
     <script src="~/Content/Scripts/Job/List.js"></script>
+    <script src="~/Content/Scripts/fileinput.min.js"></script>
 }

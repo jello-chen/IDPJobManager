@@ -15,7 +15,7 @@ namespace IDPJobManager.Web
             {
                 EnableDirectoryBrowsing = true,
                 FileSystem = new PhysicalFileSystem("Jobs"),
-                StaticFileOptions = { ContentTypeProvider = new JsonContentTypeProvider() },
+                StaticFileOptions = { ContentTypeProvider = new ContentTypeProvider() },
                 RequestPath = new Microsoft.Owin.PathString("/Directory")
             };
             app.UseFileServer(fileOptions);

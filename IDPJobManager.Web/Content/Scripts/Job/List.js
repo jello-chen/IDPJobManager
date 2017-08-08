@@ -1,4 +1,11 @@
-﻿
+﻿function initializeUploader() {
+    $("#job-uploader").fileinput({
+        uploadUrl: "/Job/Upload",
+        uploadAsync: true,
+        maxFileCount: 5
+    });
+}
+
 var d = {
     IsCheckAll: false,
     JobName: '',
@@ -20,6 +27,7 @@ var d = {
     totalCount: 0,
     showAddOrEditModel: false,
     showConfigModel: false,
+    showUploader: false,
     currentConfigJobID: '',
     dependentJobList: [],
     dependableJobList: [],
@@ -52,6 +60,7 @@ var options = {
 var vm = new Vue({
     el: '#container',
     mounted: function () {
+        initializeUploader();
         this.searchJobs();
     },
     data: function () {
