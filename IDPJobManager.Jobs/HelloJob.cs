@@ -10,7 +10,7 @@ namespace IDPJobManager.Jobs
 
         public override void DoExecute(JobExecutionContext context)
         {
-            logger.Info($"[HelloJob]{DateTime.Now.ToString()}");
+            logger.Info($"[HelloJob-1]{DateTime.Now.ToString()}");
         }
     }
 
@@ -30,7 +30,7 @@ namespace IDPJobManager.Jobs
 
         public override void Execute(JobExecutionContext context)
         {
-            logger.Info($"[HelloJob3]{DateTime.Now.ToString()}");
+            logger.Info($"[HelloJob3-1]{DateTime.Now.ToString()}");
         }
     }
 
@@ -40,7 +40,7 @@ namespace IDPJobManager.Jobs
 
         public override void DoExecute(JobExecutionContext context)
         {
-            logger.Info($"[HelloJob4]{DateTime.Now.ToString()}");
+            logger.Info($"[HelloJob4-1]{DateTime.Now.ToString()}");
             //throw new InvalidCastException("`HelloJob4` raises some errors");
         }
     }

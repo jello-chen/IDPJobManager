@@ -3,8 +3,10 @@
     using Core;
     using Core.Commands.Job;
     using Core.ViewProjections.Job;
+    using IDPJobManager.Web.Utils;
     using Nancy;
     using Nancy.ModelBinding;
+    using System.Linq;
 
     public class JobModule : BaseModule
     {
@@ -28,6 +30,7 @@
             Post["/Stop"] = _ => StopJob(this.Bind<StopJobCommand>());
             Post["/SaveJobDependency"] = _ => SaveJobDependency(this.Bind<EditJobDependencyCommand>());
             Post["/BatchOperate"] = _ => BatchOperate(this.Bind<BatchOperateJobCommand>());
+            Post["/Upload"] = _ => Upload();
         }
 
         private dynamic GetJob()
@@ -91,6 +94,24 @@
         {
             var commandResult = commandInvokerFactory.Handle<BatchOperateJobCommand, CommandResult>(command);
             return Response.AsJson(new { success = commandResult.Success, message = commandResult.GetErrors() });
+        }
+
+        private dynamic Upload()
+        {
+            var files = Request.Files.ToList();
+            if (files.Count != 1)
+                return Response.AsJson(new { success = false, message = "Not upload any file." });
+
+            using (var stream = files[0].Value)
+            {
+                if (!ZipUtil.IsRar(stream))
+                    return Response.AsJson(new { success = false, message = "This is not rar file." });
+                if (ZipUtil.UnRar(stream, "Jobs"))
+                    return Response.AsJson(new { success = true, message = string.Empty });
+                else
+                    return Response.AsJson(new { success = false, message = "Upload failed." });
+            }
+
         }
     }
 }

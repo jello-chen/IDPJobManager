@@ -2,7 +2,19 @@
     $("#job-uploader").fileinput({
         uploadUrl: "/Job/Upload",
         uploadAsync: true,
-        maxFileCount: 5
+        minFileCount: 1,
+        maxFileCount: 1,
+        allowedFileExtensions: ["rar"],
+        elErrorContainer: '#kv-error-1'
+    }).on('filebatchpreupload', function (event, data, id, index) {
+        $('#kv-success-1').html('<h4>Upload Status</h4><ul></ul>').hide();
+    }).on('fileuploaded', function (event, data, id, index) {
+        var status = data.response.success ? 'successfully' : 'failed';
+        var fname = data.files[index].name,
+            out = '<li>' + 'Uploaded file # ' + (index + 1) + ' - ' +
+                fname + ' ' + status + '.' + '</li>';
+        $('#kv-success-1 ul').append(out);
+        $('#kv-success-1').fadeIn('slow');
     });
 }
 

@@ -187,6 +187,8 @@
                 <div class="form-group">
                     <label class="control-label">Select File</label>
                     <input id="job-uploader" type="file" class="file-loading" multiple data-show-preview="false">
+                    <div id="kv-error-1" style="margin-top:10px;display:none"></div>
+                    <div id="kv-success-1" class="alert alert-success fade in" style="margin-top:10px;display:none"></div>
                 </div>
             </div>
             <div class="col-md-1"></div>
@@ -194,16 +196,15 @@
     </div>
     <span slot="footer">
         <button type="button" class="btn btn-default" v-on:click="showUploader = false">Cancel</button>
-        <button type="button" class="btn btn-primary" v-on:click="SaveJob($event)">Save</button>
     </span>
 </vb-modal>
 <!-- /.Edit -->
 
 @section Scripts{
+    <script src="~/Content/Scripts/fileinput.min.js"></script>
     <script src="~/Content/Scripts/moment-with-locales.js"></script>
     <script src="~/Content/Scripts/bootstrap-datetimepicker.min.js"></script>
     <script src="~/Content/Scripts/vue-bootstrap-pager.js"></script>
     <script src="~/Content/Scripts/vue-bootstrap-modal.js"></script>
     <script src="~/Content/Scripts/Job/List.js"></script>
-    <script src="~/Content/Scripts/fileinput.min.js"></script>
 }
