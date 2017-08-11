@@ -4,6 +4,7 @@ using Microsoft.Owin.FileSystems;
 using Microsoft.Owin.StaticFiles;
 using Nancy.Owin;
 using Owin;
+using System.Web.Http;
 
 namespace IDPJobManager.Web
 {
@@ -16,6 +17,15 @@ namespace IDPJobManager.Web
 
             //Enable SignalR
             app.MapSignalR();
+
+            // Configure Web API for self-host and use it. 
+            var config = new HttpConfiguration();
+            config.Routes.MapHttpRoute(
+                name: "DefaultApi",
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
+            app.UseWebApi(config);
 
             // File Server
             var fileOptions = new FileServerOptions
