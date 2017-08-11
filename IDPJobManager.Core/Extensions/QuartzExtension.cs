@@ -50,10 +50,6 @@ namespace IDPJobManager.Core.Extensions
                 }
                 else
                 {
-                    CronExpression ce = new CronExpression(jobInfo.CronExpression);
-                    var utcNow = DateTime.UtcNow;
-                    var offset = ce.GetTimeAfter(utcNow);
-                    Console.WriteLine($"{jobInfo.JobName}:{offset},{utcNow}");
                     if (jobInfo.Status == 1) scheduler.ResumeJob(jobKey);
                 }
                 return true;

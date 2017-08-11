@@ -1,4 +1,5 @@
 ﻿using IDPJobManager.Core;
+using Microsoft.Owin.Cors;
 using Microsoft.Owin.FileSystems;
 using Microsoft.Owin.StaticFiles;
 using Nancy.Owin;
@@ -10,6 +11,12 @@ namespace IDPJobManager.Web
     {
         public void Configuration(IAppBuilder app)
         {
+            //Enable CORS
+            app.UseCors(CorsOptions.AllowAll);
+
+            //Enable SignalR
+            app.MapSignalR();
+
             // File Server
             var fileOptions = new FileServerOptions
             {

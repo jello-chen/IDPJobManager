@@ -3,6 +3,7 @@
     using Core;
     using Core.Commands.Job;
     using Core.ViewProjections.Job;
+    using IDPJobManager.Web.Configuration;
     using IDPJobManager.Web.Utils;
     using Nancy;
     using Nancy.ModelBinding;
@@ -19,7 +20,7 @@
             this.viewProjectionFactory = viewProjectionFactory;
             this.commandInvokerFactory = commandInvokerFactory;
 
-            Get["/"] = _ => View["List"];
+            Get["/"] = _ => View["List", new { Url = IDPJobManagerConfiguration.Config.Provider.Uri.Trim('/', ' ') }];
             Get["/GetJobList"] = _ => GetJobList();
             Get["/Get"] = _ => GetJob();
             Get["/GetJobDependency"] = _ => GetJobDependency();

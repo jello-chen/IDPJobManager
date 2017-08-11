@@ -12,6 +12,7 @@ namespace IDPJobManager.Core
         private Timer timer;
         private List<string> changedJobs = new List<string>();
         private Action<List<string>> onChanged;
+        public Action OnChangeCompleted;
 
         public bool IsStart { get; private set; }
 
@@ -42,6 +43,7 @@ namespace IDPJobManager.Core
         private void OnWatchedFileChange(object state)
         {
             onChanged?.Invoke(changedJobs);
+            OnChangeCompleted?.Invoke();
         }
 
         private void JobWatcher_OnChanged(object sender, FileSystemEventArgs e)

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using IDPJobManager.Web;
 using Topshelf;
 using IDPJobManager.Core.Extensions;
@@ -38,29 +37,6 @@ namespace IDPJobManager
                 });
 
                 x.RunAsLocalSystem();
-
-                //var scheduler = JobPoolManager.Scheduler;
-
-                //using (IDPJobManagerStarter.Configure
-                //        .UsingScheduler(scheduler)
-                //        .UsingJobWatcher(new JobWatcher("Jobs", cl =>
-                //        {
-                //            var assemblyNames = cl.Select(c => Path.GetFileNameWithoutExtension(c)).ToList();
-                //            foreach (var assemblyName in assemblyNames)
-                //            {
-                //                var jobInfos = JobOperator.GetJobInfoList(assemblyName);
-                //                JobPoolManager.Instance.RemoveAll(jobInfos.Select(t => t.ID).ToList());
-                //                jobInfos.ForEach(jobInfo => scheduler.ScheduleJob(jobInfo));
-                //            }
-                //        }))
-                //        .HostedOnDefault()
-                //        .Start())
-                //{
-                //    AppDomain.MonitoringIsEnabled = true;
-                //    Console.WriteLine($"Web host started on {IDPJobManagerStarter.Configure.BaseUri}.");
-                //    scheduler.StartRunning().ScheduleJobsAsync().Wait();
-                //    Console.Read();
-                //}
             });
         }
     }

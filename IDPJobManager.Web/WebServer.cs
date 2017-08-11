@@ -4,6 +4,7 @@ using IDPJobManager.Web.Configuration;
 using Microsoft.Owin.Hosting;
 using System;
 using IDPJobManager.Core.Extensions;
+using Microsoft.AspNet.SignalR;
 
 namespace IDPJobManager.Web
 {
@@ -15,6 +16,7 @@ namespace IDPJobManager.Web
         public WebServer(JobWatcher jobWatcher)
         {
             Ensure.Requires<ArgumentNullException>(jobWatcher != null, "`jobWatcher` should not be null.");
+            jobWatcher.OnChangeCompleted = Reload;
             this.jobWatcher = jobWatcher;
         }
 
@@ -24,8 +26,13 @@ namespace IDPJobManager.Web
             Ensure.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(url), "`url` should not be null.");
             _webapp = WebApp.Start<Startup>(url);
             jobWatcher.Start();
-            Console.WriteLine($"Web host started on {url}.");
+            Logger.Instance.Info($"Web host started on {url}.");
             JobPoolManager.Scheduler.StartRunning().ScheduleJobs();
+        }
+
+        private void Reload()
+        {
+            GlobalHost.ConnectionManager.GetHubContext<JobHub>()?.Clients.All.Reload();
         }
 
         public void Stop()

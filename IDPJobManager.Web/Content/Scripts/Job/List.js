@@ -18,6 +18,25 @@
     });
 }
 
+function connect() {
+    $.connection.hub.stop();
+    $.connection.hub.url = signalrRoot + '/signalr';
+
+    var jobHub = $.connection.jobHub;
+    jobHub.client.reload = function () {
+        console.log('reload');
+        if (vm) {
+            vm.searchJobs();
+        }
+    }
+
+    $.connection.hub.start().done(function () {
+        console.log("connected.");
+    }).fail(function () {
+        console.log("can not connect.");
+    });
+}
+
 var d = {
     IsCheckAll: false,
     JobName: '',
@@ -74,6 +93,7 @@ var vm = new Vue({
     mounted: function () {
         initializeUploader();
         this.searchJobs();
+        connect();
     },
     data: function () {
         var that = this;
