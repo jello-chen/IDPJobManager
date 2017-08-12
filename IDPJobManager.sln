@@ -37,6 +37,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Script", "Script", "{100D00
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nancy.Owin", "Nancy.Owin\Nancy.Owin.csproj", "{179BFF6D-4A5A-4489-B23D-2596C8DB3190}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{1DA71FB0-02CB-48B1-A018-1C3B680DFE92}"
+	ProjectSection(SolutionItems) = preProject
+		Framework.png = Framework.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,5 +92,6 @@ Global
 		{FAE3E7C1-2F4A-402B-9E05-B9FA425906A1} = {75D434C1-2A60-4FDF-A354-8930D8D83D34}
 		{100D0048-EE60-4265-B2EB-271E83565460} = {75D434C1-2A60-4FDF-A354-8930D8D83D34}
 		{179BFF6D-4A5A-4489-B23D-2596C8DB3190} = {6655AFD1-AD78-447A-9170-CC7F74581CA6}
+		{1DA71FB0-02CB-48B1-A018-1C3B680DFE92} = {75D434C1-2A60-4FDF-A354-8930D8D83D34}
 	EndGlobalSection
 EndGlobal
