@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using IDPJobManager.Web;
 using Topshelf;
 using IDPJobManager.Core.Extensions;
@@ -35,6 +36,8 @@ namespace IDPJobManager
                     s.WhenStarted(tc => tc.Start());
                     s.WhenStopped(tc => tc.Stop());
                 });
+
+                x.SetStartTimeout(TimeSpan.FromMinutes(1));
 
                 x.RunAsLocalSystem();
             });

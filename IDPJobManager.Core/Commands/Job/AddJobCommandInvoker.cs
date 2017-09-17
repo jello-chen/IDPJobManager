@@ -11,7 +11,10 @@ namespace IDPJobManager.Core.Commands.Job
         {
             using (var dataContext = new IDPJobManagerDataContext())
             {
-                if (dataContext.T_Job.Any(j => j.JobName == command.JobName && j.JobGroup == command.JobGroup))
+                if (dataContext.T_Job.Any(j => 
+                        j.JobName == command.JobName && 
+                        j.JobGroup == command.JobGroup &&
+                        j.IsDelete != 1))
                     return new CommandResult("The job name and group already exist");
 
                 JobInfo job = new JobInfo();

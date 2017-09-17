@@ -161,21 +161,6 @@ namespace IDPJobManager.Core.Extensions
             }
             return true;
         }
-
-        public static TriggerBuilder WithCronPauseAwareCronSchedule(this TriggerBuilder triggerBuilder, string cronExpression)
-        {
-            PauseAwareCronScheduleBuilder scheduleBuilder = PauseAwareCronScheduleBuilder.CronSchedule(cronExpression);
-            return triggerBuilder.WithSchedule(scheduleBuilder);
-        }
-
-        public static TriggerBuilder WithCronPauseAwareCronSchedule(this TriggerBuilder triggerBuilder, string cronExpression, Action<PauseAwareCronScheduleBuilder> action)
-        {
-            PauseAwareCronScheduleBuilder cronScheduleBuilder = PauseAwareCronScheduleBuilder.CronSchedule(cronExpression);
-            action(cronScheduleBuilder);
-            return triggerBuilder.WithSchedule(cronScheduleBuilder);
-        }
-
-        
     }
 
     public class JobOperator
